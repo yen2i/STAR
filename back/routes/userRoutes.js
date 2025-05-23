@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 const User = require('../models/User');
 
 const SALT_ROUNDS = 10;
@@ -10,6 +13,7 @@ const isValidPassword = (password) => {
   return regex.test(password);
 };
 
+// signup
 router.post('/register', async (req, res) => {
   const { studentNumber, name, password, major } = req.body;
 
@@ -44,37 +48,48 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Login
 router.post('/login', async (req, res) => {
-    const { studentNumber, password } = req.body;
-  
-    try {
-      const user = await User.findOne({ studentNumber });
-  
-      if (!user) {
-        return res.status(400).json({ message: 'User not found' });
-      }
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-  
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid password' });
-      }
-  
-      // (추후에 JWT 토큰 발급 자리!)
-      res.status(200).json({ message: 'Login successful', user: {
+  const { studentNumber, password } = req.body;
+
+  try {
+    const user = await User.findOne({ studentNumber });
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
         studentNumber: user.studentNumber,
         name: user.name,
         major: user.major
-      }});
-  
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Server error' });
-    }
-  });
-  
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        studentNumber: user.studentNumber,
+        name: user.name,
+        major: user.major
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = router;
-
-
-
