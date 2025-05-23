@@ -2,6 +2,8 @@ import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/LoginPage.css';
+import signpassward from '../assets/signpass.png';
+import signstudentnumber from '../assets/signprofile.png';
 
 const LoginPage = () => {
   return (
@@ -9,17 +11,25 @@ const LoginPage = () => {
       <Header />
 
       <main className="login-content">
-        <h1 className="login-title">
-          <span className="highlight">SeoulTech</span> Available Room
-        </h1>
+        <div className="login-title-wrapper">
+          <h1 className="login-title">
+            <span className="highlight">SeoulTech</span> Available Room
+          </h1>
+        </div>
 
         <div className="login-box">
-          <h2>⭐ Log In</h2>
-          <input type="text" placeholder="Student Number" />
-          <input type="password" placeholder="Password" />
+          <h2 className="login-label">Log in</h2>
+          <div className="input-wrapper">
+            <img src={signstudentnumber} alt="student number" className="input-icon" />
+            <input type="text" placeholder="Student Number" />
+          </div>
+          <div className="input-wrapper">
+            <img src={signpassward } alt="password" className="input-icon" />
+            <input type="password" placeholder="Password" />
+          </div>
           <div className="login-buttons">
-            <button>로그인</button>
-            <button>회원가입</button>
+            <button>Log in</button>
+            <button>Sign in</button>
           </div>
         </div>
       </main>
