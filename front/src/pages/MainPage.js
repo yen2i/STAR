@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/MainPage.css';
-import starLogo from '../assets/starlogo.png';
+import starLogo from '../assets/starlogo_bgX.png';
 
 const MainPage = () => {
   return (
