@@ -1,0 +1,23 @@
+.signup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .signup-box {
+    border: 1px solid gray;
+    background-color: #eee;
+    padding: 24px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .signup-box input,
+  .signup-box select {
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+  

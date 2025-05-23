@@ -1,0 +1,32 @@
+.login-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .login-title {
+    margin-bottom: 24px;
+    font-size: 24px;
+  }
+  
+  .login-box {
+    border: 1px solid gray;
+    padding: 24px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .login-box input {
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .login-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  

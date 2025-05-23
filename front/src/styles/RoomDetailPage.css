@@ -1,0 +1,14 @@
+.calendar-container {
+    padding: 20px;
+  }
+  
+  .fc .fc-timegrid-slot-label {
+    font-size: 12px;
+  }
+  
+  .fc-event {
+    color: white;
+    font-size: 13px;
+    text-align: center;
+  }
+  
