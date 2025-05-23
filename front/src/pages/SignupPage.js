@@ -18,7 +18,7 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/users/register', form);
+      await axios.post('http://localhost:5000/api/users/register', form);
       alert('회원가입 성공!');
       window.location.href = '/login';
     } catch (err) {
@@ -30,18 +30,52 @@ const SignupPage = () => {
     <div className="signup-page">
       <Header />
       <main className="signup-content">
-        <h2>회원가입</h2>
         <div className="signup-box">
-          <input name="name" type="text" placeholder="Name" onChange={handleChange} />
-          <input name="studentNumber" type="text" placeholder="Student Number" onChange={handleChange} />
-          <input name="password" type="password" placeholder="Password" onChange={handleChange} />
-          <select name="major" onChange={handleChange}>
-            <option value="">Select Major</option>
-            <option value="ITM">ITM</option>
-            <option value="산업공학과">산업공학과</option>
-            <option value="컴공">컴퓨터공학과</option>
-          </select>
-          <button onClick={handleSignup}>가입하기</button>
+          <h2 className="signup-label">Sign in</h2>
+
+          <div className="input-wrapper">
+            <label>Name</label>
+            <input
+              name="name"
+              type="text"
+              placeholder="Name"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="input-wrapper">
+            <label>Student Number</label>
+            <input
+              name="studentNumber"
+              type="text"
+              placeholder="Student Number"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="input-wrapper">
+            <label>Password</label>
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="input-wrapper">
+            <label>Major</label>
+            <input
+              name="major"
+              type="text"
+              placeholder="Major"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="signup-button">
+            <button onClick={handleSignup}>Sign in</button>
+          </div>
         </div>
       </main>
       <Footer />
