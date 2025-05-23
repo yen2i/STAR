@@ -110,5 +110,53 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+// favorite buildings add & delete
+router.post('/favorites', authMiddleware, async (req, res) => {
+  const { building } = req.body;
+
+  if (!building) {
+    return res.status(400).json({ message: 'Building name is required' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user.favorites.includes(building)) {
+      user.favorites.push(building);
+      await user.save();
+    }
+
+    res.status(200).json({ favorites: user.favorites });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.delete('/favorites', authMiddleware, async (req, res) => {
+  const { building } = req.body;
+
+  if (!building) {
+    return res.status(400).json({ message: 'Building name is required' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    user.favorites = user.favorites.filter(b => b !== building);
+    await user.save();
+
+    res.status(200).json({ favorites: user.favorites });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
+
 
 module.exports = router;
