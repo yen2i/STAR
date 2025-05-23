@@ -1,0 +1,19 @@
+.my-reservation-content {
+    padding: 24px;
+  }
+  
+  .reservation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .reservation-item {
+    border: 1px solid gray;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  

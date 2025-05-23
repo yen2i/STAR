@@ -1,0 +1,25 @@
+.profile-content {
+    padding: 24px;
+  }
+  
+  .profile-box {
+    border: 1px solid gray;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .favorites-box {
+    border: 1px solid gray;
+    padding: 16px;
+  }
+  
+  .favorites-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .favorites-box li {
+    padding: 4px 0;
+  }
+  
