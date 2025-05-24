@@ -116,3 +116,45 @@
   border-radius: 50%;
   margin-left: 8px;
 }
+
+@media (max-width: 600px) {
+  .modal-box {
+    width: 90%;
+    padding: 16px;
+  }
+
+  .modal-card {
+    padding: 16px;
+    font-size: 14px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-sub {
+    font-size: 14px;
+  }
+
+  .modal-buttons {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .modal-buttons button {
+    width: 100%;
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+
+  .modal-building-box img {
+    width: 80px;
+  }
+
+  .room-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+  }
+}

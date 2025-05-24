@@ -11,9 +11,10 @@
   }
   
   .logo {
-    height: 85px;
+    height: 100px;
     width: auto;
     cursor: pointer;
+    filter: drop-shadow(0 4px 8px #fffb839f);
   }
   
   .nav {
