@@ -1,41 +1,89 @@
 .reserve-content {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .search-bar input {
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #ccc;
-  }
-  
-  .building-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .building-card {
-    border: 1px solid gray;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .thumbnail-box {
-    width: 64px;
-    height: 64px;
-    background-color: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-  }
-  
-  .building-name {
-    flex-grow: 1;
-  }
-  
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.search-bar {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.building-card {
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  border: 1px solid #d2d2d2;
+  box-shadow: 0px 0px 5px rgba(170, 170, 170, 0.3);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.building-img {
+  width: 100px;
+  height: auto;
+  object-fit: contain;
+  margin-right: 24px;
+}
+
+.building-info {
+  flex-grow: 1;
+  margin-left: 24px;
+}
+
+.building-number {
+  font-weight: 800;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.building-name {
+  font-size: 24px;
+  font-family: "IBM Plex Mono", monospace;
+  margin-bottom: 4px;
+}
+
+.building-sub {
+  font-size: 16px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.green-dot {
+  width: 8px;
+  height: 8px;
+  background-color: green;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.reserve-button {
+  background-color: #1E1759;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.star-icon {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  margin-left: 16px;
+}
