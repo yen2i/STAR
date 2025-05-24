@@ -8,7 +8,6 @@ import '../styles/ReservePage.css';
 import filledStar from '../assets/icons/star-filled.png';
 import emptyStar from '../assets/icons/star-empty.png';
 
-// ✅ 이미지 경로 자동 매핑 함수
 const getBuildingImage = (id) => {
   try {
     return require(`../assets/buildings img/${id}.png`);
@@ -17,6 +16,27 @@ const getBuildingImage = (id) => {
   }
 };
 
+const MOCK_BUILDINGS = [
+  {
+    id: '32',
+    name: 'Frontier Hall',
+    image: getBuildingImage('32'),
+    availableRooms: [
+      { room: 'Room 107', time: '8:00 - 10:50' },
+      { room: 'Room 131', time: '11:00 - 12:50' },
+    ],
+  },
+  {
+    id: '2',
+    name: 'Dasan Hall',
+    image: getBuildingImage('2'),
+    availableRooms: [
+      { room: 'Room 201', time: '9:00 - 9:50' },
+      { room: 'Room 105', time: '10:00 - 10:50' },
+    ],
+  },
+];
+
 const ReservePage = () => {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
@@ -24,69 +44,84 @@ const ReservePage = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
+  // ✅ 초기 즐겨찾기 로드 (localStorage)
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('favorites')) || [];
     setFavoriteIds(stored);
   }, []);
 
+  // ✅ 서버에서 건물 + 즐겨찾기 불러오기
   useEffect(() => {
-    const fetchBuildings = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/buildings'); // ✅ 전체 건물 리스트
-        const buildingData = res.data.buildings;
+        const token = localStorage.getItem('token');
+        const [buildingsRes, userRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/buildings'),
+          axios.get('http://localhost:5000/api/users/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+        ]);
+
+        const buildingData = buildingsRes.data.buildings;
+        const favoritesFromServer = userRes.data.user.favorites || [];
 
         const buildingList = await Promise.all(
           buildingData.map(async (b) => {
             const roomRes = await axios.get(`http://localhost:5000/api/buildings/rooms?buildingNo=${b.buildingNo}`);
             const availableRooms = roomRes.data.rooms || [];
-
             return {
               id: String(b.buildingNo),
               name: b.buildingName,
               image: getBuildingImage(b.buildingNo),
               availableRooms: availableRooms.map(room => ({
                 room: `Room ${room}`,
-                time: '8:00 - 17:50'
+                time: '8:00 - 17:50',
               }))
             };
           })
         );
 
         setBuildings(buildingList);
+        setFavoriteIds(favoritesFromServer.map(String));
+        localStorage.setItem('favorites', JSON.stringify(favoritesFromServer));
+
       } catch (err) {
-        console.warn('⚠️ API 실패 - mock 데이터 사용');
-        setBuildings([
-          {
-            id: '32',
-            name: 'Frontier Hall',
-            image: getBuildingImage('32'),
-            availableRooms: [
-              { room: 'Room 107', time: '8:00 - 10:50' },
-              { room: 'Room 131', time: '11:00 - 12:50' },
-            ],
-          },
-          {
-            id: '2',
-            name: 'Dasan Hall',
-            image: getBuildingImage('2'),
-            availableRooms: [
-              { room: 'Room 201', time: '9:00 - 9:50' },
-              { room: 'Room 105', time: '10:00 - 10:50' },
-            ],
-          },
-        ]);
+        console.warn('⚠️ 서버 연결 실패. mock 데이터 사용');
+        const stored = JSON.parse(localStorage.getItem('favorites')) || [];
+        setBuildings(MOCK_BUILDINGS);
+        setFavoriteIds(stored);
       }
     };
 
-    fetchBuildings();
+    fetchData();
   }, []);
 
-  const toggleFavorite = (id) => {
-    const updated = favoriteIds.includes(id)
-      ? favoriteIds.filter((fid) => fid !== id)
-      : [...favoriteIds, id];
-    setFavoriteIds(updated);
-    localStorage.setItem('favorites', JSON.stringify(updated));
+  // ✅ 즐겨찾기 추가/삭제
+  const toggleFavorite = async (id) => {
+    const token = localStorage.getItem('token');
+    const isAlreadyFavorite = favoriteIds.includes(id);
+
+    try {
+      if (isAlreadyFavorite) {
+        await axios.delete('http://localhost:5000/api/users/favorites', {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { building: id },
+        });
+        const updated = favoriteIds.filter(b => b !== id);
+        setFavoriteIds(updated);
+        localStorage.setItem('favorites', JSON.stringify(updated));
+      } else {
+        await axios.post('http://localhost:5000/api/users/favorites', { building: id }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const updated = [...favoriteIds, id];
+        setFavoriteIds(updated);
+        localStorage.setItem('favorites', JSON.stringify(updated));
+      }
+    } catch (err) {
+      console.error('❌ 즐겨찾기 동기화 실패', err);
+      alert('로그인이 필요하거나 서버 오류가 발생했습니다.');
+    }
   };
 
   const openRoomModal = (building) => {
