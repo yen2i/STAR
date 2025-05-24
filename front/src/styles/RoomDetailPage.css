@@ -1,14 +1,112 @@
-.calendar-container {
-    padding: 20px;
-  }
-  
-  .fc .fc-timegrid-slot-label {
-    font-size: 12px;
-  }
-  
-  .fc-event {
-    color: white;
-    font-size: 13px;
-    text-align: center;
-  }
-  
+.room-detail-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.legend {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.gray {
+  background-color: #e0e0e0;
+}
+.green {
+  background-color: #d9fdd3;
+}
+.selected-dot {
+  background-color: #47d147;
+}
+
+/* 👉 Navigation arrows */
+.arrow-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 12px 0;
+  gap: 20px;
+}
+.arrow {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.arrow:hover {
+  transform: scale(1.1);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  margin-bottom: 24px;
+}
+
+.grid-header,
+.grid-row {
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 14px;
+}
+
+.time-label {
+  font-weight: bold;
+  width: 140px;
+  background-color: #f8f8f8;
+}
+
+.header {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.available {
+  background-color: #d9fdd3;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.available:hover {
+  background-color: #bdf4b4;
+}
+
+.unavailable {
+  background-color: #e0e0e0;
+  color: #888;
+}
+
+.selected {
+  background-color: #47d147;
+  font-weight: bold;
+  color: white;
+}
+
+/* ✅ Confirm button */
+.confirm-button {
+  margin-top: 12px;
+  padding: 10px 24px;
+  background-color: #47d147;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+.confirm-button:hover {
+  background-color: #3bb13b;
+}
