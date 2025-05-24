@@ -1,0 +1,60 @@
+.header {
+    padding: 0 25px;
+    height: 100px; 
+    border-bottom: 1px solid rgb(231, 231, 231);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #E3E3E3;
+    box-shadow: 0px 4px 10px 5px rgba(229, 229, 229, 0.25);
+    box-sizing: border-box;
+  }
+  
+  .logo {
+    height: 85px;
+    width: auto;
+    cursor: pointer;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 40px;
+    margin-right: 30px;
+  }
+  
+  .link {
+    cursor: pointer;
+    color: #000;
+    font-family: Inter, sans-serif;
+    font-size: 18px;
+    font-weight: lighter;
+    text-decoration: underline;
+  }
+  
+  /*모바일 */
+  @media screen and (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 12px;
+    }
+  
+    .logo {
+      height: 100px;
+      width: auto;
+      margin-bottom: 12px;
+    }
+  
+    .nav {
+      flex-direction: column;
+      gap: 12px;
+      margin-right: 0;
+      width: 100%;
+      align-items: flex-start;
+    }
+  
+    .link {
+      font-size: 20px;
+    }
+  }
+  
