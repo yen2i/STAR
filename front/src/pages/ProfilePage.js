@@ -11,16 +11,26 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token'); // 로그인 후 저장된 토큰
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token');
+
         const res = await axios.get('http://localhost:5000/api/users/me', {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+
         setUser(res.data.user);
       } catch (err) {
-        console.error(err);
-        alert('유저 정보를 불러올 수 없습니다.');
+        console.warn('⚠️ 서버에서 유저 정보를 불러오지 못함. 로컬 mock 데이터로 대체');
+
+        // 🔁 localStorage에 저장된 mock 유저 정보로 대체
+        const localUser = localStorage.getItem('user');
+        if (localUser) {
+          setUser(JSON.parse(localUser));
+        } else {
+          alert('유저 정보를 불러올 수 없습니다.');
+        }
       }
     };
 
@@ -42,10 +52,11 @@ const ProfilePage = () => {
             <div>{user.major}</div>
           </div>
         </div>
+
         <h2>My Favorite Classroom</h2>
         <div className="favorites-box">
           <ul>
-            {user.favorites.map((room, index) => (
+            {user.favorites?.map((room, index) => (
               <li key={index}>▶ {room}</li>
             ))}
           </ul>

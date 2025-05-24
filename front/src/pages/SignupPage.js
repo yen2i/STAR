@@ -18,11 +18,20 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
+      // 1. 실제 백엔드로 요청 시도
       await axios.post('http://localhost:5000/api/users/register', form);
       alert('회원가입 성공!');
       window.location.href = '/login';
     } catch (err) {
-      alert(err.response?.data?.message || '회원가입 실패');
+      // 2. 서버 연결 실패시 -> 로컬 저장
+      if (!err.response) {
+        console.warn('⚠️ 서버 연결 실패. 로컬에 mock 회원 저장.');
+        localStorage.setItem('mockUser', JSON.stringify(form));
+        alert('⚠️ 서버 미연결 - 로컬 mock 회원가입 완료');
+        window.location.href = '/login';
+      } else {
+        alert(err.response?.data?.message || '회원가입 실패');
+      }
     }
   };
 
@@ -32,47 +41,17 @@ const SignupPage = () => {
       <main className="signup-content">
         <div className="signup-box">
           <h2 className="signup-label">Sign in</h2>
-
-          <div className="input-wrapper">
-            <label>Name</label>
-            <input
-              name="name"
-              type="text"
-              placeholder="Name"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="input-wrapper">
-            <label>Student Number</label>
-            <input
-              name="studentNumber"
-              type="text"
-              placeholder="Student Number"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="input-wrapper">
-            <label>Password</label>
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="input-wrapper">
-            <label>Major</label>
-            <input
-              name="major"
-              type="text"
-              placeholder="Major"
-              onChange={handleChange}
-            />
-          </div>
-
+          {['name', 'studentNumber', 'password', 'major'].map((field) => (
+            <div className="input-wrapper" key={field}>
+              <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+              <input
+                name={field}
+                type={field === 'password' ? 'password' : 'text'}
+                placeholder={field}
+                onChange={handleChange}
+              />
+            </div>
+          ))}
           <div className="signup-button">
             <button onClick={handleSignup}>Sign in</button>
           </div>
