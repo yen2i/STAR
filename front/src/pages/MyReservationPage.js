@@ -5,49 +5,21 @@ import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import '../styles/MyReservationPage.css';
 
-// ⛳ 빌딩 번호 → 파일 이름 매핑
-const getBuildingFileName = (number) => {
-  const map = {
-    2: 'dasan',
-    3: 'changhak',
-    4: 'second start-up incubation center',
-    5: 'hyeseong',
-    6: 'cheongun',
-    7: 'technopark',
-    8: 'changjo',
-    14: 'pottery practice',
-    31: 'start-up incubation center',
-    32: 'frontier',
-    38: 'international',
-    39: 'davinchi',
-    40: 'eoui',
-    51: '100years',
-    53: 'SangSang',
-    54: 'areum',
-    57: 'endlessness',
-    '57-A': 'endlessness',
-    60: 'mirae',
-    62: 'technocube',
-  };
-  return map[number] || 'dasan';
-};
-
-// 이미지 로드 시 fallback 처리 포함
+// ✅ 이미지 경로: 번호 기반으로 정리된 경우
 const getBuildingImage = (number) => {
   try {
-    return require(`../assets/buildings img/${number}_${getBuildingFileName(number)}.png`);
+    return require(`../assets/buildings img/${number}.png`);
   } catch {
-    return require('../assets/buildings img/2_dasan.png');
+    return require('../assets/buildings img/2.png'); // default: Dasan Hall
   }
 };
 
 const MyReservationPage = () => {
   const [reservations, setReservations] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [modalStep, setModalStep] = useState('confirm'); // 'confirm' | 'success'
+  const [modalStep, setModalStep] = useState('confirm');
   const [selectedReservation, setSelectedReservation] = useState(null);
 
-  // 📦 예약 정보 불러오기 (API or mock)
   useEffect(() => {
     const fetchReservations = async () => {
       try {
@@ -89,7 +61,7 @@ const MyReservationPage = () => {
   };
 
   const confirmCancel = () => {
-    // 실제 API 요청이 필요하면 여기에 axios.delete 추가
+    // 백엔드 요청 추가 가능
     setReservations(reservations.filter(r => r.id !== selectedReservation.id));
     setModalStep('success');
   };
@@ -103,7 +75,6 @@ const MyReservationPage = () => {
   return (
     <div className="my-reservation-page">
       <Header />
-
       <main className="my-reservation-content">
         <h2>My reservation ({reservations.length})</h2>
         <div className="reservation-list">
@@ -132,9 +103,7 @@ const MyReservationPage = () => {
                 <div className="modal-sub">{selectedReservation.room}</div>
                 <div className="modal-sub">- {selectedReservation.time}, {selectedReservation.date}</div>
               </div>
-            
               <p style={{ marginTop: '24px' }}>Are you sure to cancel your reservation?</p>
-            
               <div className="modal-buttons">
                 <button onClick={confirmCancel}>Yes!</button>
                 <button onClick={closeModal}>No!</button>

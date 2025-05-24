@@ -8,6 +8,15 @@ import '../styles/ReservePage.css';
 import filledStar from '../assets/icons/star-filled.png';
 import emptyStar from '../assets/icons/star-empty.png';
 
+// ✅ 이미지 경로 자동 매핑 함수
+const getBuildingImage = (id) => {
+  try {
+    return require(`../assets/buildings img/${id}.png`);
+  } catch {
+    return require(`../assets/buildings img/2.png`);
+  }
+};
+
 const ReservePage = () => {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
@@ -15,39 +24,52 @@ const ReservePage = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
-  // 즐겨찾기 불러오기
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('favorites')) || [];
     setFavoriteIds(stored);
   }, []);
 
-  // 건물 정보 불러오기
   useEffect(() => {
     const fetchBuildings = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/buildings');
-        setBuildings(res.data.buildings);
+        const week = new Date().toISOString().split('T')[0];
+        const res = await axios.get(`http://localhost:5000/api/rooms/available?week=${week}`);
+        const data = res.data.buildings;
+
+        const buildingList = Object.entries(data).map(([id, info]) => {
+          return {
+            id,
+            name: id,
+            image: getBuildingImage(info.code), // 🔁 info.code = 32, 2, 40 같은 숫자 ID
+            availableRooms: info.availableRooms.map(room => ({
+              room: `Room ${room}`,
+              time: '8:00 - 17:50',
+            })),
+          };
+        });
+
+        setBuildings(buildingList);
       } catch (err) {
-        console.warn('⚠️ API 실패 - mock 데이터 사용');
+        console.warn('⚠️ API 실패 - mock 사용');
         setBuildings([
           {
-            id: 32,
+            id: '32',
             name: 'Frontier Hall',
-            image: require('../assets/buildings img/32_frontier.png'),
+            image: getBuildingImage('32'),
             availableRooms: [
               { room: 'Room 107', time: '8:00 - 10:50' },
               { room: 'Room 131', time: '11:00 - 12:50' },
             ],
           },
           {
-            id: 2,
+            id: '2',
             name: 'Dasan Hall',
-            image: require('../assets/buildings img/2_dasan.png'),
+            image: getBuildingImage('2'),
             availableRooms: [
               { room: 'Room 201', time: '9:00 - 9:50' },
               { room: 'Room 105', time: '10:00 - 10:50' },
             ],
-          }
+          },
         ]);
       }
     };
@@ -55,12 +77,10 @@ const ReservePage = () => {
     fetchBuildings();
   }, []);
 
-  // 즐겨찾기 토글
   const toggleFavorite = (id) => {
     const updated = favoriteIds.includes(id)
       ? favoriteIds.filter((fid) => fid !== id)
       : [...favoriteIds, id];
-
     setFavoriteIds(updated);
     localStorage.setItem('favorites', JSON.stringify(updated));
   };
@@ -86,7 +106,7 @@ const ReservePage = () => {
         <div className="building-number">No. {building.id}</div>
         <div className="building-name">{building.name}</div>
         <div className="available-count">
-          🟢 Currently Available Classrooms ({building.availableRooms.length})
+          🟢 Available Rooms ({building.availableRooms.length})
         </div>
       </div>
       <button className="reserve-btn" onClick={() => openRoomModal(building)}>Reserve Now →</button>
@@ -132,7 +152,7 @@ const ReservePage = () => {
               <img src={selectedBuilding.image} alt={selectedBuilding.name} />
               <h3>{selectedBuilding.name}</h3>
             </div>
-            <p className="modal-label">Currently Available Classrooms ({selectedBuilding.availableRooms.length})</p>
+            <p className="modal-label">Available Rooms ({selectedBuilding.availableRooms.length})</p>
             {selectedBuilding.availableRooms.map((room, i) => (
               <div key={i} className="room-row">
                 <span>{room.room} <span className="green-dot" /></span>
