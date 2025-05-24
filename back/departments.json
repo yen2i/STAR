@@ -1,130 +1,130 @@
 [
   {
-    "college": "공과대학",
-    "department": "기계시스템디자인공학과"
+    "college": "College of Engineering",
+    "department": "Department of Mechanical System Design Engineering"
   },
   {
-    "college": "공과대학",
-    "department": "기계·자동차공학과"
+    "college": "College of Engineering",
+    "department": "Department of Mechanical & Automotive Engineering"
   },
   {
-    "college": "공과대학",
-    "department": "안전공학과"
+    "college": "College of Engineering",
+    "department": "Department of Safety Engineering"
   },
   {
-    "college": "공과대학",
-    "department": "신소재공학과"
+    "college": "College of Engineering",
+    "department": "Department of Materials Science & Engineering"
   },
   {
-    "college": "공과대학",
-    "department": "건설시스템공학과"
+    "college": "College of Engineering",
+    "department": "Department of Civil Engineering"
   },
   {
-    "college": "공과대학",
-    "department": "건축학부"
+    "college": "College of Engineering",
+    "department": "School of Architecture"
   },
   {
-    "college": "공과대학",
-    "department": "건축공학전공"
+    "college": "College of Engineering",
+    "department": "Architectural Engineering Course, the School of Architecture"
   },
   {
-    "college": "공과대학",
-    "department": "건축학전공"
+    "college": "College of Engineering",
+    "department": "Architectural Design Course, the School of Architecture"
   },
   {
-    "college": "정보통신대학",
-    "department": "전기정보공학과"
+    "college": "College of Information and Communication Engineering",
+    "department": "Department of Electrical and Information Engineering"
   },
   {
-    "college": "정보통신대학",
-    "department": "컴퓨터공학과"
+    "college": "College of Information and Communication Engineering",
+    "department": "Department of Computer Science and Engineering"
   },
   {
-    "college": "정보통신대학",
-    "department": "스마트ICT융합공학과"
+    "college": "College of Information and Communication Engineering",
+    "department": "Department of Smart ICT Convergence Engineering"
   },
   {
-    "college": "정보통신대학",
-    "department": "전자공학과"
+    "college": "College of Information and Communication Engineering",
+    "department": "Department of Electronic Engineering"
   },
   {
-    "college": "에너지바이오대학",
-    "department": "화공생명공학과"
+    "college": "College of Energy and Biotechnology",
+    "department": "Department of Chemical and Biomolecular Engineering"
   },
   {
-    "college": "에너지바이오대학",
-    "department": "환경공학과"
+    "college": "College of Energy and Biotechnology",
+    "department": "Department of Environmental Engineering"
   },
   {
-    "college": "에너지바이오대학",
-    "department": "식품생명공학과"
+    "college": "College of Energy and Biotechnology",
+    "department": "Department of Food Science and Biotechnology"
   },
   {
-    "college": "에너지바이오대학",
-    "department": "정밀화학과"
+    "college": "College of Energy and Biotechnology",
+    "department": "Department of Fine Chemistry"
   },
   {
-    "college": "에너지바이오대학",
-    "department": "스포츠과학과"
+    "college": "College of Energy and Biotechnology",
+    "department": "Department of Sports Sciences"
   },
   {
-    "college": "에너지바이오대학",
-    "department": "안경광학과"
+    "college": "College of Energy and Biotechnology",
+    "department": "Department of Optometry"
   },
   {
-    "college": "조형대학",
-    "department": "디자인학과"
+    "college": "College of Art and Design",
+    "department": "Department of Design"
   },
   {
-    "college": "조형대학",
-    "department": "시각디자인전공"
+    "college": "College of Art and Design",
+    "department": "Department of Design(Visual Design Program)"
   },
   {
-    "college": "조형대학",
-    "department": "산업디자인전공"
+    "college": "College of Art and Design",
+    "department": "Department of Design(Industrial Design Program)"
   },
   {
-    "college": "인문사회대학",
-    "department": "문예창작학과"
+    "college": "College of Humanities and Social Sciences",
+    "department": "Department of Creative Writing"
   },
   {
-    "college": "기술경영융합대학",
-    "department": "산업공학과"
+    "college": "College of Business and Technology",
+    "department": "Department of Industrial Engineering"
   },
   {
-    "college": "기술경영융합대학",
-    "department": "산업정보시스템전공(학부)"
+    "college": "College of Business and Technology",
+    "department": "Industrial and Information Systems Engineering"
   },
   {
-    "college": "기술경영융합대학",
-    "department": "ITM전공(학부)"
+    "college": "College of Business and Technology",
+    "department": "IT Management"
   },
   {
-    "college": "기술경영융합대학",
-    "department": "경영학과"
+    "college": "College of Business and Technology",
+    "department": "Department of Business Administration"
   },
   {
-    "college": "기술경영융합대학",
-    "department": "경영학전공(학부)"
+    "college": "College of Business and Technology",
+    "department": "Business Administration"
   },
   {
-    "college": "기술경영융합대학",
-    "department": "MSDE 학과"
+    "college": "College of Business and Technology",
+    "department": "Manufacturing Systems and Design Engineering"
   },
   {
-    "college": "미래융합대학",
-    "department": "융합기계공학과"
+    "college": "College of Multidisciplinary Studies Toward Future",
+    "department": "Department of Mechanical Convergence Engineering"
   },
   {
-    "college": "미래융합대학",
-    "department": "건설환경융합공학과"
+    "college": "College of Multidisciplinary Studies Toward Future",
+    "department": "Department of Civil and Environmental Engineering"
   },
   {
-    "college": "미래융합대학",
-    "department": "헬스피트니스학과"
+    "college": "College of Multidisciplinary Studies Toward Future",
+    "department": "Department of Health and Fitness"
   },
   {
-    "college": "미래융합대학",
-    "department": "벤처경영학과"
+    "college": "College of Multidisciplinary Studies Toward Future",
+    "department": "Department of Entrepreneurship and Venture Management"
   }
 ]
