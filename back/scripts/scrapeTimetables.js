@@ -34,7 +34,7 @@ const departments = require('../departments.json');
     if (department.startsWith('value:')) {
       selectedValue = department.replace('value:', '');
     } else {
-      // 🔍 <option>에서 text 기반 매칭
+      // <option>에서 text 기반 매칭
       const departmentOptions = await page.$$eval('#cbo_Less option', options =>
         options.map(o => ({ value: o.value, text: o.textContent.trim() }))
       );
@@ -62,12 +62,12 @@ const departments = require('../departments.json');
 
     // 데이터 추출 (열 번호 확인 필요시 수정)
     const rows = await page.$$eval('#grd_ScheduleMain tbody tr', trs => {
-      return trs.map(tr => {
-        const tds = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
-        return {
-          subject: tds[2],   // Course Name
-          time: tds[9],      // Class Hours
-          room: tds[18]      // Classroom
+        return trs.map(tr => {
+            const tds = Array.from(tr.querySelectorAll('td'));
+            return {
+              subject: tds[3]?.getAttribute('title')?.trim() || '',   // Course Name (영문)
+              time: tds[10]?.getAttribute('title')?.trim() || '',      // Class Hours (영문)
+              room: tds[19]?.getAttribute('title')?.trim() || ''      // Classroom (영문)
         };
       });
     });
