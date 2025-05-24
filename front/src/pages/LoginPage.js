@@ -43,17 +43,20 @@ const LoginPage = () => {
       <Header />
       <main className="login-content">
         <div className="login-title-wrapper">
-          <h1 className="login-title">
-            <span className="highlight">SeoulTech</span> Available Room
-          </h1>
+        <h1 className="login-title">
+          <span className="r">S</span>eoul{' '}
+          <span className="b">T</span>ech{' '}
+          <span className="g">A</span>vailable{' '}
+          <span className="g">R</span>oom
+        </h1>
         </div>
         <div className="login-box">
           <h2 className="login-label">Log in</h2>
-          <div className="input-wrapper">
+          <div className="login-input-wrapper">
             <img src={signstudentnumber} alt="student number" className="input-icon" />
             <input name="studentNumber" type="text" placeholder="Student Number" onChange={handleChange} />
           </div>
-          <div className="input-wrapper">
+          <div className="login-input-wrapper">
             <img src={signpassward} alt="password" className="input-icon" />
             <input name="password" type="password" placeholder="Password" onChange={handleChange} />
           </div>
