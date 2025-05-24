@@ -60,23 +60,23 @@ const MyReservationPage = () => {
     setShowModal(true);
   };
 
-  const confirmCancel = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation._id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-  
-      // 성공 시 프론트 상태 업데이트
-      setReservations(reservations.filter(r => r._id !== selectedReservation._id));
-      setModalStep('success');
-    } catch (err) {
-      console.error('❌ 예약 취소 실패:', err);
-      alert('Reservation cancel failed.');
-      closeModal();
-    }
-  };
-  
+const confirmCancel = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // 성공 시 프론트 상태 업데이트
+    setReservations(reservations.filter(r => r.id !== selectedReservation.id));
+    setModalStep('success');
+  } catch (err) {
+    console.error('❌ 예약 취소 실패:', err);
+    alert('Reservation cancel failed.');
+    closeModal();
+  }
+};
+
 
   const closeModal = () => {
     setShowModal(false);
@@ -96,7 +96,7 @@ const MyReservationPage = () => {
               <div className="reservation-info">
                 <div className="reservation-building-number">No.{res.number}</div>
                 <div className="reservation-building">{res.building}</div>
-                <div className="reservation-detail">- {res.room} ({res.time}, {res.date})</div>
+                <div className="reservation-detail">- {res.room} ({res.startTime}-{res.endTime}, {res.date})</div>
               </div>
               <button className="cancel-button" onClick={() => handleCancel(res)}>
                 Cancel Reservation →
