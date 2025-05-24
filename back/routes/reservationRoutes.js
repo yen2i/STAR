@@ -43,7 +43,7 @@ router.post('/', authMiddleware, async (req, res) => {
     await newReservation.save();
 
     res.status(201).json({
-      message: 'Reservation successful',
+      message: 'Reservation completed successfully!',
       reservation: newReservation
     });
 
@@ -69,6 +69,31 @@ router.get('/my', authMiddleware, async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   });
+
+  // 예약 취소 (자기 것만 삭제 가능)
+router.delete('/:id', authMiddleware, async (req, res) => {
+    try {
+      const reservation = await Reservation.findById(req.params.id);
+  
+      // 존재하지 않는 예약
+      if (!reservation) {
+        return res.status(404).json({ message: 'Reservation not found' });
+      }
+  
+      // 다른 사용자의 예약을 지우려고 할 경우
+      if (reservation.user.toString() !== req.user.id) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+  
+      await Reservation.findByIdAndDelete(req.params.id);
+  
+      res.status(200).json({ message: 'Reservation cancelled successfully!' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
   
 
 module.exports = router;
