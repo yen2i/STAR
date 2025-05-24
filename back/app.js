@@ -5,6 +5,8 @@ require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes');
 
+const reservationRoutes = require('./routes/reservationRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,6 +25,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
