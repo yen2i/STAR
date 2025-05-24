@@ -9,6 +9,8 @@ const reservationRoutes = require('./routes/reservationRoutes');
 
 const timetableRoutes = require('./routes/timetableRoutes');
 
+const buildingRoutes = require('./routes/buildingRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -29,6 +31,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/timetable', timetableRoutes);
+app.use('/api/buildings', buildingRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
