@@ -24,10 +24,10 @@ const MyReservationPage = () => {
     const fetchReservations = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/reservations/me', {
+        const res = await axios.get('http://localhost:5000/api/reservations/my', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setReservations(res.data.reservations);
+        setReservations(res.data);
       } catch (err) {
         console.warn('⚠️ 백엔드 실패 - mock 데이터 사용');
         setReservations([
@@ -60,11 +60,23 @@ const MyReservationPage = () => {
     setShowModal(true);
   };
 
-  const confirmCancel = () => {
-    // 백엔드 요청 추가 가능
-    setReservations(reservations.filter(r => r.id !== selectedReservation.id));
-    setModalStep('success');
+  const confirmCancel = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
+      // 성공 시 프론트 상태 업데이트
+      setReservations(reservations.filter(r => r._id !== selectedReservation._id));
+      setModalStep('success');
+    } catch (err) {
+      console.error('❌ 예약 취소 실패:', err);
+      alert('Reservation cancel failed.');
+      closeModal();
+    }
   };
+  
 
   const closeModal = () => {
     setShowModal(false);

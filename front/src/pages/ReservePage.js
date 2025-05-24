@@ -32,12 +32,12 @@ const ReservePage = () => {
   useEffect(() => {
     const fetchBuildings = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/rooms'); // ✅ 전체 건물 리스트
+        const res = await axios.get('http://localhost:5000/api/buildings'); // ✅ 전체 건물 리스트
         const buildingData = res.data.buildings;
 
         const buildingList = await Promise.all(
           buildingData.map(async (b) => {
-            const roomRes = await axios.get(`http://localhost:5000/api/rooms/rooms?buildingNo=${b.buildingNo}`);
+            const roomRes = await axios.get(`http://localhost:5000/api/buildings/rooms?buildingNo=${b.buildingNo}`);
             const availableRooms = roomRes.data.rooms || [];
 
             return {

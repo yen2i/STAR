@@ -144,22 +144,25 @@ const RoomDetailPage = () => {
     const endTime = startTimes[r + selected.length] || '18:00';
   
     try {
-      await axios.post('http://localhost:5000/api/reservation', {
-        building,
-        room,
-        date,
-        startTime,
-        endTime
-      }, { withCredentials: true });
+      await axios.post(
+        'http://localhost:5000/api/reservations',
+        { building, room, date, startTime, endTime },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
       setShowConfirm(false);
       setShowSuccess(true);
     } catch (err) {
       console.warn('⚠️ Reservation failed. Using mock.');
-      console.error(err); // 디버깅용
+      console.error(err);
       setShowConfirm(false);
-      setShowSuccess(true); // 💡 실패했지만 성공처럼 처리
+      setShowSuccess(true);
     }
   };
+  
   
 
   return (
