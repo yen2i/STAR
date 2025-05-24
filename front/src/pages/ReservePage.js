@@ -145,7 +145,7 @@ const ReservePage = () => {
       <div className="building-info">
         <div className="building-number">No. {building.id}</div>
         <div className="building-name">{building.name}</div>
-        <div className="available-count">
+        <div className="available-cunot">
           🟢 Available Rooms ({building.availableRooms.length})
         </div>
       </div>

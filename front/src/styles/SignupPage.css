@@ -1,3 +1,8 @@
+/* ✅ 기본 전체 레이아웃 */
+* {
+  box-sizing: border-box;
+}
+
 .signup-page {
   display: flex;
   flex-direction: column;
@@ -10,79 +15,105 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: 40px 16px;
 }
 
 .signup-box {
-  width: 707px;
-  height: 776px;
-  border-radius: 20px;
-  border: 0.5px solid #656565;
+  width: 100%;
+  max-width: 500px;
   background: #F7F7F7;
-  box-shadow: 0px 0px 10px 5px rgba(104, 104, 104, 0.25);
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  padding: 32px;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
 }
 
 .signup-label {
+  font-size: 24px;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  margin-bottom: 8px;
   color: #000;
-  font-family: Inter;
-  font-size: 48px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin-left: 61px;
-  margin-top: 45px;
 }
 
 .input-wrapper {
-  position: relative;
-  margin-left: 61px;
-  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
-  gap:10px;
+  width: 100%;
+  gap: 8px;
 }
 
 .input-wrapper label {
+  font-size: 16px;
   color: #000;
-  font-family: Inter;
-  font-size: 28px;
-  font-style: normal;
-  font-weight: 300;
-  line-height: normal;
+  font-weight: 400;
+  font-family: Inter, sans-serif;
 }
 
 .input-wrapper input,
 .input-wrapper select {
-  width: 583px;
-  height: 71px;
-  padding: 18px;
-  border-radius: 10px;
-  border: 0.5px solid #656565;
-  background: #FFF;
-  box-shadow: 0px 0px 5px 2px rgba(104, 104, 104, 0.25);  color: #707070;
-  font-family: Inter;
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 300;
-  line-height: normal;
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  font-family: Inter, sans-serif;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+  background: white;
 }
 
 .signup-button {
   display: flex;
-  margin-left: 453px ;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 16px;
 }
 
 .signup-button button {
-  width: 191px;
-  height: 50px;
+  width: 160px;
+  height: 42px;
   background-color: #1E1759;
   border-radius: 10px;
-  border: 0.5px solid #656565;
+  border: none;
   color: #FFF;
   font-family: Inter;
-  font-size: 28px;
-  font-weight: 300;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
+.signup-button button:hover {
+  background-color: #150f40;
+}
+
+/*모바일*/
+@media (max-width: 600px) {
+  .signup-box {
+    padding: 24px;
+    max-width: 100%;
+  }
+
+  .signup-label {
+    font-size: 20px;
+  }
+
+  .input-wrapper input,
+  .input-wrapper select {
+    font-size: 15px;
+    height: 44px;
+  }
+
+  .signup-button {
+    justify-content: center;
+  }
+
+  .signup-button button {
+    width: 100%;
+  }
 }

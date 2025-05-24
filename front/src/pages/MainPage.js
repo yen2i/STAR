@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/MainPage.css';
-import starLogo from '../assets/starlogo_bgX.png';
+import starLogo from '../assets/starlogo.png';
 
 const MainPage = () => {
   const navigate = useNavigate();
