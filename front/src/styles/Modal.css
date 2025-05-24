@@ -1,0 +1,80 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(80, 80, 80, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+/* 사이즈 별 너비 */
+.modal-small {
+  width: 320px;
+}
+.modal-medium {
+  width: 460px;
+}
+.modal-large {
+  width: 600px;
+}
+
+.modal-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0px 4px 8px rgba(180, 180, 180, 0.25);
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.modal-sub {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.modal-buttons {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.modal-buttons button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #1e1759;
+  color: #fff;
+  min-width: 120px;
+  transition: 0.2s ease;
+}
+
+.modal-buttons button:hover {
+  background-color: #2e2680;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
