@@ -41,7 +41,7 @@ const ReservePage = () => {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(''); // 🔧 검색어 상태 추가
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
@@ -81,7 +81,7 @@ const ReservePage = () => {
         );
 
         setBuildings(buildingList);
-        setFavoriteIds(favoritesFromServer.map(String));
+        setFavoriteIds(favoritesFromServer);
         localStorage.setItem('favorites', JSON.stringify(favoritesFromServer));
       } catch (err) {
         console.warn('⚠️ 서버 연결 실패. mock 데이터 사용');
@@ -94,24 +94,24 @@ const ReservePage = () => {
     fetchData();
   }, []);
 
-  const toggleFavorite = async (id) => {
+  const toggleFavorite = async (buildingName) => {
     const token = localStorage.getItem('token');
-    const isAlreadyFavorite = favoriteIds.includes(id);
+    const isAlreadyFavorite = favoriteIds.includes(buildingName);
 
     try {
       if (isAlreadyFavorite) {
         await axios.delete('http://localhost:5000/api/users/favorites', {
           headers: { Authorization: `Bearer ${token}` },
-          data: { building: id },
+          data: { building: buildingName },
         });
-        const updated = favoriteIds.filter(b => b !== id);
+        const updated = favoriteIds.filter(name => name !== buildingName);
         setFavoriteIds(updated);
         localStorage.setItem('favorites', JSON.stringify(updated));
       } else {
-        await axios.post('http://localhost:5000/api/users/favorites', { building: id }, {
+        await axios.post('http://localhost:5000/api/users/favorites', { building: buildingName }, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const updated = [...favoriteIds, id];
+        const updated = [...favoriteIds, buildingName];
         setFavoriteIds(updated);
         localStorage.setItem('favorites', JSON.stringify(updated));
       }
@@ -132,13 +132,12 @@ const ReservePage = () => {
     navigate(`/reserve/${roomNumber}`);
   };
 
-  // 🔧 검색 필터링 적용
   const filteredBuildings = buildings.filter(b =>
     b.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.id));
-  const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.id));
+  const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.name));
+  const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.name));
 
   const renderBuildingCard = (building) => (
     <div className="building-card" key={building.id}>
@@ -152,10 +151,10 @@ const ReservePage = () => {
       </div>
       <button className="reserve-btn" onClick={() => openRoomModal(building)}>Reserve Now →</button>
       <img
-        src={favoriteIds.includes(building.id) ? filledStar : emptyStar}
+        src={favoriteIds.includes(building.name) ? filledStar : emptyStar}
         alt="favorite"
         className="star-icon"
-        onClick={() => toggleFavorite(building.id)}
+        onClick={() => toggleFavorite(building.name)}
       />
     </div>
   );
@@ -164,7 +163,6 @@ const ReservePage = () => {
     <div className="reserve-page">
       <Header />
       <main className="reserve-content">
-        {/* 🔧 검색 입력창 */}
         <div className="search-bar">
           <input
             type="text"
