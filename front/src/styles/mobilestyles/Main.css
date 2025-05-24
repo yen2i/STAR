@@ -1,0 +1,80 @@
+/* 모바일 전용 레이아웃 */
+.main-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 24px 16px;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+  }
+  
+  /* 로고 */
+  .logo-image {
+    width: 220px;
+    height: auto;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.1));
+  }
+  
+  /* 타이틀 */
+  .sub-title {
+    font-family: 'Jaro', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    background: linear-gradient(
+      to top,
+      rgba(255, 253, 201, 0.6) 40%,
+      transparent 40%
+    );
+    padding: 0 12px;
+  }
+  
+  /* 버튼 */
+  .main-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  .main-buttons button {
+    width: 100%;
+    max-width: 300px;
+    height: 50px;
+    font-size: 16px;
+    background-color: #1E1759;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .main-buttons button:hover {
+    background-color: #150f40;
+    transform: translateY(-1px);
+  }
+  
+  /* 로고 애니메이션 */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  
