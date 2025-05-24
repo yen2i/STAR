@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/ProfilePage.css';
-import profileImg from '../assets/profile.png'; // 실제 프로필 이미지 경로 지정
+import profileImg from '../assets/profile.png';
 
 const ProfilePage = () => {
-  const user = {
-    name: '박신형',
-    studentNumber: '23102009',
-    major: 'ITM',
-    favorites: ['프론티어관', '다산관'],
-  };
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token'); // 로그인 후 저장된 토큰
+        const res = await axios.get('http://localhost:5000/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setUser(res.data.user);
+      } catch (err) {
+        console.error(err);
+        alert('유저 정보를 불러올 수 없습니다.');
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="profile-page">
@@ -34,7 +51,6 @@ const ProfilePage = () => {
           </ul>
         </div>
       </main>
-
       <Footer />
     </div>
   );

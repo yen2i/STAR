@@ -1,19 +1,94 @@
 .my-reservation-content {
-    padding: 24px;
-  }
-  
-  .reservation-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 16px;
-  }
-  
-  .reservation-item {
-    border: 1px solid gray;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.my-reservation-content h2 {
+  margin-bottom: 80px;
+  width: 1211px;
+  color: #000;
+  font-family: Inter;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.reservation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+
+}
+
+.reservation-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  border: 1px solid #d2d2d2;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(170, 170, 170, 0.3);
+  width: 1211px;
+  height: 251px;
+}
+
+.reservation-img {
+  width: 232px;
+  height: 226px;
+  object-fit: contain;
+  margin-right: 20px;
+}
+
+.reservation-info {
+  margin-top: 10px;
+  margin-left: 50px;
+  flex: 1;
+}
+
+.reservation-building-number {
+  color: #000;
+  font-family: Inter;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+  margin-bottom: 30px;
+}
+
+.reservation-building {
+  color: #000;
+  font-family: "IBM Plex Mono";
+  font-size: 44px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 10px;
+}
+
+.reservation-detail {
+  color: #000;
+  font-family: "IBM Plex Mono";
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.cancel-button {
+  width: 287px;
+  height: 60px;
+  border-radius: 10px;
+  border: 0.5px solid #656565;
+  background: #1E1759;
+  color: #FFF;
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin-top: 165px;
+}

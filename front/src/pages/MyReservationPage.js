@@ -3,14 +3,32 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import '../styles/MyReservationPage.css';
+import frontierImg from '../assets/buildings img/32_frontier.png';
+import dasanImg from '../assets/buildings img/2_dasan.png';
 
 const MyReservationPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
 
   const reservations = [
-    { id: 1, building: '다산관', room: '107호', time: '9시~10시' },
-    { id: 2, building: '프론티어관', room: '402호', time: '10시~11시' },
+    {
+      id: 1,
+      building: 'Frontier Hall',
+      image: frontierImg,
+      room: 'Room 107',
+      time: '8:00-10:50',
+      date: '5/23',
+      number: 32,
+    },
+    {
+      id: 2,
+      building: 'Dasan Hall',
+      image: dasanImg,
+      room: 'Room 201',
+      time: '9:00-9:50',
+      date: '5/26',
+      number: 1,
+    },
   ];
 
   const handleCancel = (reservation) => {
@@ -22,7 +40,6 @@ const MyReservationPage = () => {
     console.log('예약 취소됨:', selectedReservation);
     setShowModal(false);
     setSelectedReservation(null);
-    // 실제로는 API 호출 필요
   };
 
   return (
@@ -30,14 +47,19 @@ const MyReservationPage = () => {
       <Header />
 
       <main className="my-reservation-content">
-        <h2>내 예약 목록</h2>
+        <h2>My reservation ({reservations.length})</h2>
         <div className="reservation-list">
           {reservations.map((res) => (
-            <div key={res.id} className="reservation-item">
-              <div>
-                {res.building}, {res.room}, {res.time}
+            <div key={res.id} className="reservation-card">
+              <img src={res.image} alt={res.building} className="reservation-img" />
+              <div className="reservation-info">
+                <div className="reservation-building-number">No.{res.number}</div>
+                <div className="reservation-building">{res.building}</div>
+                <div className="reservation-detail">- {res.room} ({res.time}, {res.date})</div>
               </div>
-              <button onClick={() => handleCancel(res)}>예약취소</button>
+              <button className="cancel-button" onClick={() => handleCancel(res)}>
+                Cancel Reservation →
+              </button>
             </div>
           ))}
         </div>
@@ -46,8 +68,8 @@ const MyReservationPage = () => {
       {showModal && (
         <Modal onClose={() => setShowModal(false)}>
           <div className="modal-content">
-            <p>예약이 취소되었습니다.</p>
-            <button onClick={() => setShowModal(false)}>확인</button>
+            <p>The reservation has been cancelled.</p>
+            <button onClick={() => setShowModal(false)}>OK</button>
           </div>
         </Modal>
       )}
