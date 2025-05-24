@@ -1,10 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/MainPage.css';
 import starLogo from '../assets/starlogo_bgX.png';
 
 const MainPage = () => {
+  const navigate = useNavigate();
+
+  const handleBookClick = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/reserve');
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleMapClick = () => {
+    window.open('https://en.seoultech.ac.kr/about/cmap', '_blank');
+  };
+
   return (
     <div className="main-page">
       <Header />
@@ -27,8 +43,8 @@ const MainPage = () => {
 
         {/* 버튼 묶음 */}
         <div className="main-buttons">
-          <button>Book a Classroom Now →</button>
-          <button>View Classroom Map →</button>
+          <button onClick={handleBookClick}>Book a Classroom Now →</button>
+          <button onClick={handleMapClick}>View Classroom Map →</button>
         </div>
       </main>
 
