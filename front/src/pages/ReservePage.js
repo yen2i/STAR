@@ -32,25 +32,29 @@ const ReservePage = () => {
   useEffect(() => {
     const fetchBuildings = async () => {
       try {
-        const week = new Date().toISOString().split('T')[0];
-        const res = await axios.get(`http://localhost:5000/api/rooms/available?week=${week}`);
-        const data = res.data.buildings;
+        const res = await axios.get('http://localhost:5000/api/buildings'); // ✅ 전체 건물 리스트
+        const buildingData = res.data.buildings;
 
-        const buildingList = Object.entries(data).map(([id, info]) => {
-          return {
-            id,
-            name: id,
-            image: getBuildingImage(info.code), // 🔁 info.code = 32, 2, 40 같은 숫자 ID
-            availableRooms: info.availableRooms.map(room => ({
-              room: `Room ${room}`,
-              time: '8:00 - 17:50',
-            })),
-          };
-        });
+        const buildingList = await Promise.all(
+          buildingData.map(async (b) => {
+            const roomRes = await axios.get(`http://localhost:5000/api/buildings/rooms?buildingNo=${b.buildingNo}`);
+            const availableRooms = roomRes.data.rooms || [];
+
+            return {
+              id: String(b.buildingNo),
+              name: b.buildingName,
+              image: getBuildingImage(b.buildingNo),
+              availableRooms: availableRooms.map(room => ({
+                room: `Room ${room}`,
+                time: '8:00 - 17:50'
+              }))
+            };
+          })
+        );
 
         setBuildings(buildingList);
       } catch (err) {
-        console.warn('⚠️ API 실패 - mock 사용');
+        console.warn('⚠️ API 실패 - mock 데이터 사용');
         setBuildings([
           {
             id: '32',

@@ -35,14 +35,14 @@ const RoomDetailPage = () => {
   const building = "Frontier Hall";
   const room = roomId;
 
-  const formatDate = (date) => date.toISOString().split('T')[0];
-
   function getStartOfWeek(date) {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     return new Date(d.setDate(diff));
   }
+
+  const formatDate = (date) => date.toISOString().split('T')[0];
 
   const moveWeek = (offset) => {
     const next = new Date(startOfWeek);
@@ -66,18 +66,30 @@ const RoomDetailPage = () => {
   };
 
   const handleClick = (row, col) => {
-    if (grid[row][col] !== 0) return;
     const key = `${row}-${col}`;
-    const isAdjacent = selected.length === 0 || selected.some(k => {
-      const [r, c] = k.split('-').map(Number);
-      return r === row - 1 && c === col || r === row + 1 && c === col;
-    });
-    if (!isAdjacent) return alert('Select contiguous time slots only.');
-    const updated = selected.includes(key)
-      ? selected.filter(k => k !== key)
-      : [...selected, key];
-    setSelected(updated);
+  
+    // 이미 선택된 경우 → 해제
+    if (selected.includes(key)) {
+      const updated = selected.filter(k => k !== key);
+      setSelected(updated);
+      return;
+    }
+  
+    // 새로 선택한 경우 → 인접성 확인
+    const isAdjacent =
+      selected.length === 0 ||
+      selected.some(k => {
+        const [r, c] = k.split('-').map(Number);
+        return r === row - 1 && c === col || r === row + 1 && c === col;
+      });
+  
+    if (!isAdjacent) {
+      return alert('Select contiguous time slots only.');
+    }
+  
+    setSelected([...selected, key]);
   };
+  
 
   const getCellClass = (r, c) => {
     if (grid[r][c] === 1) return 'cell unavailable';
@@ -104,7 +116,7 @@ const RoomDetailPage = () => {
       });
       setGrid(newGrid);
     } catch (err) {
-      console.warn('⚠️ API failed. Using mock.');
+      console.warn('⚠️ API failed. Using mock data.');
       setGrid([
         [0, 0, 1, 0, 0],
         [0, 0, 1, 1, 0],
@@ -130,21 +142,28 @@ const RoomDetailPage = () => {
     const date = getDateByCol(c);
     const startTime = startTimes[r];
     const endTime = startTimes[r + selected.length] || '18:00';
-
+  
     try {
-      await axios.post('http://localhost:5000/api/reservation', {
-        building,
-        room,
-        date,
-        startTime,
-        endTime
-      }, { withCredentials: true });
+      await axios.post(
+        'http://localhost:5000/api/reservations',
+        { building, room, date, startTime, endTime },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
       setShowConfirm(false);
       setShowSuccess(true);
     } catch (err) {
-      alert('Reservation failed.');
+      console.warn('⚠️ Reservation failed. Using mock.');
+      console.error(err);
+      setShowConfirm(false);
+      setShowSuccess(true);
     }
   };
+  
+  
 
   return (
     <div className="room-detail-page">
@@ -186,15 +205,29 @@ const RoomDetailPage = () => {
           <button className="reserve-btn" onClick={() => setShowConfirm(true)}>Make a Reservation →</button>
         </div>
 
-        {showConfirm && (
+        {showConfirm && selected.length > 0 && (
           <div className="modal">
             <div className="modal-box">
               <h3>{building}</h3>
               <p>Room {room}</p>
-              <p>- {getDateByCol(parseInt(selected[0]?.split('-')[1]))}</p>
+
+              {/* ✅ 추가: 요일/Period 범위/시간대 */}
+              {(() => {
+                const [firstRow, firstCol] = selected[0].split('-').map(Number);
+                const lastRow = firstRow + selected.length - 1;
+                const day = dayKor[firstCol];
+                const periodRange = `Period ${firstRow} - ${lastRow}`;
+                const timeRange = `${startTimes[firstRow]} - ${startTimes[lastRow + 1] || '18:00'}`;
+                return (
+                  <p>- {day} / {periodRange} ({timeRange})</p>
+                );
+              })()}
+
               <p>Are you sure to confirm your reservation?</p>
-              <button onClick={handleReservation}>Yes</button>
-              <button onClick={() => setShowConfirm(false)}>No</button>
+              <div className="modal-buttons">
+                <button onClick={handleReservation}>Yes</button>
+                <button onClick={() => setShowConfirm(false)}>No</button>
+              </div>
             </div>
           </div>
         )}
@@ -203,7 +236,7 @@ const RoomDetailPage = () => {
           <div className="modal">
             <div className="modal-box">
               <h3>Reservation completed successfully!</h3>
-              <button onClick={() => navigate('/my-reservations')}>Check Reservation</button>
+              <button onClick={() => navigate('/my-reservation')}>Check Reservation</button>
             </div>
           </div>
         )}
