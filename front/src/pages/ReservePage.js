@@ -8,7 +8,6 @@ import '../styles/ReservePage.css';
 import filledStar from '../assets/icons/star-filled.png';
 import emptyStar from '../assets/icons/star-empty.png';
 
-// ✅ 이미지 경로 자동 매핑 함수
 const getBuildingImage = (id) => {
   try {
     return require(`../assets/buildings img/${id}.png`);
@@ -17,10 +16,32 @@ const getBuildingImage = (id) => {
   }
 };
 
+const MOCK_BUILDINGS = [
+  {
+    id: '32',
+    name: 'Frontier Hall',
+    image: getBuildingImage('32'),
+    availableRooms: [
+      { room: 'Room 107', time: '8:00 - 10:50' },
+      { room: 'Room 131', time: '11:00 - 12:50' },
+    ],
+  },
+  {
+    id: '2',
+    name: 'Dasan Hall',
+    image: getBuildingImage('2'),
+    availableRooms: [
+      { room: 'Room 201', time: '9:00 - 9:50' },
+      { room: 'Room 105', time: '10:00 - 10:50' },
+    ],
+  },
+];
+
 const ReservePage = () => {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
@@ -30,63 +51,74 @@ const ReservePage = () => {
   }, []);
 
   useEffect(() => {
-    const fetchBuildings = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/buildings'); // ✅ 전체 건물 리스트
-        const buildingData = res.data.buildings;
+        const token = localStorage.getItem('token');
+        const [buildingsRes, userRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/buildings'),
+          axios.get('http://localhost:5000/api/users/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+        ]);
+
+        const buildingData = buildingsRes.data.buildings;
+        const favoritesFromServer = userRes.data.user.favorites || [];
 
         const buildingList = await Promise.all(
           buildingData.map(async (b) => {
             const roomRes = await axios.get(`http://localhost:5000/api/buildings/rooms?buildingNo=${b.buildingNo}`);
             const availableRooms = roomRes.data.rooms || [];
-
             return {
               id: String(b.buildingNo),
               name: b.buildingName,
               image: getBuildingImage(b.buildingNo),
               availableRooms: availableRooms.map(room => ({
                 room: `Room ${room}`,
-                time: '8:00 - 17:50'
+                time: '8:00 - 17:50',
               }))
             };
           })
         );
 
         setBuildings(buildingList);
+        setFavoriteIds(favoritesFromServer);
+        localStorage.setItem('favorites', JSON.stringify(favoritesFromServer));
       } catch (err) {
-        console.warn('⚠️ API 실패 - mock 데이터 사용');
-        setBuildings([
-          {
-            id: '32',
-            name: 'Frontier Hall',
-            image: getBuildingImage('32'),
-            availableRooms: [
-              { room: 'Room 107', time: '8:00 - 10:50' },
-              { room: 'Room 131', time: '11:00 - 12:50' },
-            ],
-          },
-          {
-            id: '2',
-            name: 'Dasan Hall',
-            image: getBuildingImage('2'),
-            availableRooms: [
-              { room: 'Room 201', time: '9:00 - 9:50' },
-              { room: 'Room 105', time: '10:00 - 10:50' },
-            ],
-          },
-        ]);
+        console.warn('⚠️ 서버 연결 실패. mock 데이터 사용');
+        const stored = JSON.parse(localStorage.getItem('favorites')) || [];
+        setBuildings(MOCK_BUILDINGS);
+        setFavoriteIds(stored);
       }
     };
 
-    fetchBuildings();
+    fetchData();
   }, []);
 
-  const toggleFavorite = (id) => {
-    const updated = favoriteIds.includes(id)
-      ? favoriteIds.filter((fid) => fid !== id)
-      : [...favoriteIds, id];
-    setFavoriteIds(updated);
-    localStorage.setItem('favorites', JSON.stringify(updated));
+  const toggleFavorite = async (buildingName) => {
+    const token = localStorage.getItem('token');
+    const isAlreadyFavorite = favoriteIds.includes(buildingName);
+
+    try {
+      if (isAlreadyFavorite) {
+        await axios.delete('http://localhost:5000/api/users/favorites', {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { building: buildingName },
+        });
+        const updated = favoriteIds.filter(name => name !== buildingName);
+        setFavoriteIds(updated);
+        localStorage.setItem('favorites', JSON.stringify(updated));
+      } else {
+        await axios.post('http://localhost:5000/api/users/favorites', { building: buildingName }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const updated = [...favoriteIds, buildingName];
+        setFavoriteIds(updated);
+        localStorage.setItem('favorites', JSON.stringify(updated));
+      }
+    } catch (err) {
+      console.error('❌ 즐겨찾기 동기화 실패', err);
+      alert('로그인이 필요하거나 서버 오류가 발생했습니다.');
+    }
   };
 
   const openRoomModal = (building) => {
@@ -100,8 +132,12 @@ const ReservePage = () => {
     navigate(`/reserve/${roomNumber}`);
   };
 
-  const favoriteBuildings = buildings.filter(b => favoriteIds.includes(b.id));
-  const nonFavoriteBuildings = buildings.filter(b => !favoriteIds.includes(b.id));
+  const filteredBuildings = buildings.filter(b =>
+    b.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.name));
+  const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.name));
 
   const renderBuildingCard = (building) => (
     <div className="building-card" key={building.id}>
@@ -115,10 +151,10 @@ const ReservePage = () => {
       </div>
       <button className="reserve-btn" onClick={() => openRoomModal(building)}>Reserve Now →</button>
       <img
-        src={favoriteIds.includes(building.id) ? filledStar : emptyStar}
+        src={favoriteIds.includes(building.name) ? filledStar : emptyStar}
         alt="favorite"
         className="star-icon"
-        onClick={() => toggleFavorite(building.id)}
+        onClick={() => toggleFavorite(building.name)}
       />
     </div>
   );
@@ -128,7 +164,12 @@ const ReservePage = () => {
       <Header />
       <main className="reserve-content">
         <div className="search-bar">
-          <input type="text" placeholder="Search a Classroom" />
+          <input
+            type="text"
+            placeholder="Search a Classroom"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         {favoriteBuildings.length > 0 && (
