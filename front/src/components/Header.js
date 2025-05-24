@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../assets/starlogo_bgX.png';
+import logo from '../assets/starlogo.png';
 import '../styles/Header.css'; // CSS 분리 후 import
 
 const Header = () => {
