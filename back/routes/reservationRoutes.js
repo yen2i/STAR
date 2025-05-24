@@ -59,4 +59,16 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
+// 예약 목록 조회: 현재 로그인한 사용자의 예약만 반환
+router.get('/my', authMiddleware, async (req, res) => {
+    try {
+      const reservations = await Reservation.find({ user: req.user.id }).sort({ date: 1 });
+      res.status(200).json(reservations);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
+
 module.exports = router;
