@@ -41,16 +41,15 @@ const ReservePage = () => {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // 🔧 검색어 상태 추가
   const [showModal, setShowModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
-  // ✅ 초기 즐겨찾기 로드 (localStorage)
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('favorites')) || [];
     setFavoriteIds(stored);
   }, []);
 
-  // ✅ 서버에서 건물 + 즐겨찾기 불러오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -84,7 +83,6 @@ const ReservePage = () => {
         setBuildings(buildingList);
         setFavoriteIds(favoritesFromServer.map(String));
         localStorage.setItem('favorites', JSON.stringify(favoritesFromServer));
-
       } catch (err) {
         console.warn('⚠️ 서버 연결 실패. mock 데이터 사용');
         const stored = JSON.parse(localStorage.getItem('favorites')) || [];
@@ -96,7 +94,6 @@ const ReservePage = () => {
     fetchData();
   }, []);
 
-  // ✅ 즐겨찾기 추가/삭제
   const toggleFavorite = async (id) => {
     const token = localStorage.getItem('token');
     const isAlreadyFavorite = favoriteIds.includes(id);
@@ -135,8 +132,13 @@ const ReservePage = () => {
     navigate(`/reserve/${roomNumber}`);
   };
 
-  const favoriteBuildings = buildings.filter(b => favoriteIds.includes(b.id));
-  const nonFavoriteBuildings = buildings.filter(b => !favoriteIds.includes(b.id));
+  // 🔧 검색 필터링 적용
+  const filteredBuildings = buildings.filter(b =>
+    b.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.id));
+  const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.id));
 
   const renderBuildingCard = (building) => (
     <div className="building-card" key={building.id}>
@@ -162,8 +164,14 @@ const ReservePage = () => {
     <div className="reserve-page">
       <Header />
       <main className="reserve-content">
+        {/* 🔧 검색 입력창 */}
         <div className="search-bar">
-          <input type="text" placeholder="Search a Classroom" />
+          <input
+            type="text"
+            placeholder="Search a Classroom"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         {favoriteBuildings.length > 0 && (
