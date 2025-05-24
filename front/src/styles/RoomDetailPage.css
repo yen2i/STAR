@@ -1,12 +1,16 @@
 .room-detail-content {
   padding: 24px;
+}
+
+.calendar-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 16px;
 }
 
 .legend {
-  margin: 10px 0;
+  margin-bottom: 10px;
   font-size: 14px;
 }
 
@@ -15,44 +19,19 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  margin: 0 4px;
 }
-.gray {
-  background-color: #e0e0e0;
-}
-.green {
-  background-color: #d9fdd3;
-}
-.selected-dot {
-  background-color: #47d147;
-}
-
-/* 👉 Navigation arrows */
-.arrow-buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 12px 0;
-  gap: 20px;
-}
-.arrow {
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-.arrow:hover {
-  transform: scale(1.1);
-}
+.gray { background-color: #d3d3d3; }
+.green { background-color: #d9fdd3; }
+.dark-green { background-color: #32cd32; }
 
 .grid {
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc;
-  margin-bottom: 24px;
 }
 
-.grid-header,
-.grid-row {
+.grid-header, .grid-row {
   display: flex;
 }
 
@@ -61,27 +40,23 @@
   padding: 12px;
   border: 1px solid #ccc;
   text-align: center;
-  font-size: 14px;
+  min-width: 100px;
 }
 
 .time-label {
-  font-weight: bold;
   width: 140px;
-  background-color: #f8f8f8;
+  font-weight: bold;
+  background-color: #f9f9f9;
 }
 
 .header {
-  background-color: #f0f0f0;
+  background-color: #eee;
   font-weight: bold;
 }
 
 .available {
   background-color: #d9fdd3;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-.available:hover {
-  background-color: #bdf4b4;
 }
 
 .unavailable {
@@ -90,37 +65,21 @@
 }
 
 .selected {
-  background-color: #47d147;
-  font-weight: bold;
+  background-color: #32cd32;
   color: white;
+  font-weight: bold;
 }
 
-/* ✅ Confirm button */
-.confirm-button {
-  margin-top: 12px;
-  padding: 10px 24px;
-  background-color: #47d147;
+.calendar-actions {
+  margin-top: 16px;
+  text-align: right;
+}
+
+.reserve-btn {
+  padding: 10px 18px;
+  background-color: #062A50;
   color: white;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-}
-.confirm-button:hover {
-  background-color: #3bb13b;
-}
-
-.selected-dot {
-  background-color: #47d147;
-}
-
-.reserve-confirm-btn {
-  background-color: #47d147;
-  color: white;
-  padding: 10px 20px;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
 }
