@@ -1,8 +1,19 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const departments = require('../departments.json');
+const Timetable = require('../models/Timetable');
+
+dotenv.config();
 
 (async () => {
+  // ✅ MongoDB 연결
+  await mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  });
+  console.log('✅ Connected to MongoDB');
+
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
@@ -10,15 +21,11 @@ const departments = require('../departments.json');
     waitUntil: 'networkidle2'
   });
 
-  // 언어를 영어로 설정
   await page.select('#cbo_lang', 'en');
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  // 1학기 선택
   await page.select('#cbo_Smst', '1');
   await new Promise(resolve => setTimeout(resolve, 300));
-
-  const timetableData = [];
 
   for (const { college, department } of departments) {
     console.log(`🔍 Fetching for: ${college} - ${department}`);
@@ -30,11 +37,9 @@ const departments = require('../departments.json');
 
     let selectedValue = null;
 
-    // department가 "value:"로 시작하면 직접 지정
     if (department.startsWith('value:')) {
       selectedValue = department.replace('value:', '');
     } else {
-      // <option>에서 text 기반 매칭
       const departmentOptions = await page.$$eval('#cbo_Less option', options =>
         options.map(o => ({ value: o.value, text: o.textContent.trim() }))
       );
@@ -49,7 +54,6 @@ const departments = require('../departments.json');
     await page.select('#cbo_Less', selectedValue);
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    // 조회 버튼 클릭 및 테이블 대기
     try {
       await Promise.all([
         page.click('#btn_ReportSearch'),
@@ -60,23 +64,23 @@ const departments = require('../departments.json');
       continue;
     }
 
-    // 데이터 추출 (열 번호 확인 필요시 수정)
     const rows = await page.$$eval('#grd_ScheduleMain tbody tr', trs => {
-        return trs.map(tr => {
-            const tds = Array.from(tr.querySelectorAll('td'));
-            return {
-              subject: tds[3]?.getAttribute('title')?.trim() || '',   // Course Name (영문)
-              time: tds[10]?.getAttribute('title')?.trim() || '',      // Class Hours (영문)
-              room: tds[19]?.getAttribute('title')?.trim() || ''      // Classroom (영문)
+      return trs.map(tr => {
+        const tds = Array.from(tr.querySelectorAll('td'));
+        return {
+          subject: tds[3]?.getAttribute('title')?.trim() || '',
+          time: tds[10]?.getAttribute('title')?.trim() || '',
+          room: tds[19]?.getAttribute('title')?.trim() || ''
         };
       });
     });
 
-    timetableData.push({ college, department, lectures: rows });
+    await Timetable.create({ college, department, lectures: rows });
+    console.log(`✅ Saved: ${department}`);
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   await browser.close();
-  fs.writeFileSync('timetables.json', JSON.stringify(timetableData, null, 2), 'utf-8');
-  console.log('✅ Timetable scraping completed. Data saved to timetables.json');
+  await mongoose.disconnect();
+  console.log('🏁 Scraping complete & MongoDB disconnected');
 })();

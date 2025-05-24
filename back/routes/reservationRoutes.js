@@ -3,17 +3,27 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const Reservation = require('../models/Reservation');
 
-// ✅ 예약 생성 (startTime, endTime 겹침 체크 포함)
+const moment = require('moment'); // ⬅️ 날짜 계산용
+
+// 시간 ➝ 교시 매핑 (예: 08:00 → Period 0)
+const getPeriodFromTime = (time) => {
+  const hour = parseInt(time.split(':')[0]);
+  const periodMap = { 8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 6, 15: 7, 16: 8, 17: 9 };
+  return periodMap[hour];
+};
+
 router.post('/', authMiddleware, async (req, res) => {
   const { building, room, date, startTime, endTime } = req.body;
 
-  // 필수값 확인
   if (!building || !room || !date || !startTime || !endTime) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
   try {
-    // ✅ 중복 예약 체크 (시간 겹침 여부 확인)
+    const period = getPeriodFromTime(startTime);
+    const dayOfWeek = moment(date).format('ddd'); // "Mon", "Tue", ...
+
+    // ✅ 중복 예약 체크
     const overlapping = await Reservation.findOne({
       building,
       room,
@@ -27,17 +37,18 @@ router.post('/', authMiddleware, async (req, res) => {
     });
 
     if (overlapping) {
-      return res.status(409).json({ message: 'This time already reserved' });
+      return res.status(409).json({ message: 'This time is already reserved' });
     }
 
-    // ✅ 예약 저장
     const newReservation = new Reservation({
       user: req.user.id,
       building,
       room,
       date,
       startTime,
-      endTime
+      endTime,
+      dayOfWeek,
+      period
     });
 
     await newReservation.save();
@@ -50,7 +61,6 @@ router.post('/', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
 
-    // MongoDB unique index 충돌로 인한 중복
     if (err.code === 11000) {
       return res.status(409).json({ message: 'Time slot already reserved (conflict)' });
     }
