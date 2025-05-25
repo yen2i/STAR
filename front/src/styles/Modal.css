@@ -18,6 +18,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
   animation: fadeIn 0.25s ease-in-out;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 /* 사이즈 별 너비 */
@@ -29,6 +32,25 @@
 }
 .modal-large {
   width: 600px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-content {
+  padding-top: 12px;
 }
 
 .modal-card {
@@ -74,11 +96,6 @@
   background-color: #2e2680;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .modal-building-box {
   margin: 12px auto;
   padding: 12px;
@@ -115,6 +132,11 @@
   background-color: green;
   border-radius: 50%;
   margin-left: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 600px) {

@@ -63,12 +63,12 @@ const MyReservationPage = () => {
 const confirmCancel = async () => {
   try {
     const token = localStorage.getItem('token');
-    await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation.id}`, {
+    await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation._id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     // 성공 시 프론트 상태 업데이트
-    setReservations(reservations.filter(r => r.id !== selectedReservation.id));
+    setReservations(reservations.filter(r => r._id !== selectedReservation._id));
     setModalStep('success');
   } catch (err) {
     console.error('❌ 예약 취소 실패:', err);
