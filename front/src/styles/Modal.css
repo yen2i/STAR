@@ -9,34 +9,57 @@
   justify-content: center;
   align-items: center;
   z-index: 999;
+  overflow: hidden;
 }
 
 .modal-box {
-  background: #ffffff;
+  position: relative;
+  background: #fff;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  text-align: center;
   animation: fadeIn 0.25s ease-in-out;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 사이즈 별 너비 */
-.modal-small {
-  width: 320px;
-}
-.modal-medium {
-  width: 460px;
-}
-.modal-large {
-  width: 600px;
+/* ✅ 내부 스크롤 컨테이너 */
+.modal-content-scrollable {
+  overflow-y: auto;
+  max-height: 70vh;
 }
 
+/* ✅ 닫기 버튼 */
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #555;
+  cursor: pointer;
+  z-index: 10; /* 추가 */
+}
+
+
+.modal-close-button:hover {
+  color: #333;
+}
+
+/* ✅ 크기별 너비 */
+.modal-small { width: 320px; }
+.modal-medium { width: 460px; }
+.modal-large { width: 600px; }
+
+/* ✅ 공통 모달 내용 구성 요소 */
 .modal-card {
-  background-color: #fff;
+  background: #fff;
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 16px;
-  box-shadow: 0px 4px 8px rgba(180, 180, 180, 0.25);
+  box-shadow: 0 4px 8px rgba(180, 180, 180, 0.25);
   font-family: "IBM Plex Mono", monospace;
 }
 
@@ -72,11 +95,6 @@
 
 .modal-buttons button:hover {
   background-color: #2e2680;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 .modal-building-box {
@@ -117,6 +135,13 @@
   margin-left: 8px;
 }
 
+/* ✅ 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ✅ 모바일 대응 */
 @media (max-width: 600px) {
   .modal-box {
     width: 90%;

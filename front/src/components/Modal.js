@@ -8,7 +8,10 @@ const Modal = ({ onClose, children, size = 'medium' }) => {
         className={`modal-box modal-${size}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {children}
+        <button className="modal-close-button" onClick={onClose}>×</button>
+        <div className="modal-content-scrollable">
+          {children}
+        </div>
       </div>
     </div>
   );

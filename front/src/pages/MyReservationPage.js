@@ -5,54 +5,76 @@ import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import '../styles/MyReservationPage.css';
 
-// ✅ 이미지 경로: 번호 기반으로 정리된 경우
+// ✅ 이미지 경로 매핑
 const getBuildingImage = (number) => {
   try {
     return require(`../assets/buildings img/${number}.png`);
   } catch {
-    return require('../assets/buildings img/2.png'); // default: Dasan Hall
+    return require('../assets/buildings img/2.png'); // Default: Dasan Hall
   }
 };
 
 const MyReservationPage = () => {
   const [reservations, setReservations] = useState([]);
+  const [buildings, setBuildings] = useState([]); // 🧭 건물 번호 <-> 이름 매핑용
   const [showModal, setShowModal] = useState(false);
   const [modalStep, setModalStep] = useState('confirm');
   const [selectedReservation, setSelectedReservation] = useState(null);
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/reservations/my', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setReservations(res.data);
-      } catch (err) {
-        console.warn('⚠️ 백엔드 실패 - mock 데이터 사용');
-        setReservations([
-          {
-            id: 1,
-            building: 'Frontier Hall',
-            number: 32,
-            room: 'Room 107',
-            time: '8:00-10:50',
-            date: '5/23',
-          },
-          {
-            id: 2,
-            building: 'Dasan Hall',
-            number: 2,
-            room: 'Room 201',
-            time: '9:00-9:50',
-            date: '5/26',
-          }
-        ]);
-      }
-    };
+  // 🧭 건물 리스트 받아오기
+  const fetchBuildings = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/buildings');
+      setBuildings(res.data.buildings || []);
+    } catch (err) {
+      console.warn('⚠️ 건물 정보 fetch 실패, fallback mock 사용');
+      setBuildings([
+        { buildingNo: 32, buildingName: 'Frontier Hall' },
+        { buildingNo: 2, buildingName: 'Dasan Hall' }
+      ]);
+    }
+  };
 
+  // 🗓️ 예약 정보 불러오기
+  const fetchReservations = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get('http://localhost:5000/api/reservations/my', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setReservations(res.data);
+    } catch (err) {
+      console.warn('⚠️ 예약 정보 fetch 실패, mock 사용');
+      setReservations([
+        {
+          _id: 'mock1',
+          building: 'Frontier Hall',
+          room: '107',
+          date: '2024-06-05',
+          startTime: '08:00',
+          endTime: '10:50'
+        },
+        {
+          _id: 'mock2',
+          building: 'Dasan Hall',
+          room: '201',
+          date: '2024-06-06',
+          startTime: '09:00',
+          endTime: '09:50'
+        }
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    fetchBuildings();
     fetchReservations();
   }, []);
+
+  const getBuildingNo = (name) => {
+    const found = buildings.find(b => b.buildingName === name);
+    return found?.buildingNo || 2;
+  };
 
   const handleCancel = (reservation) => {
     setSelectedReservation(reservation);
@@ -60,23 +82,20 @@ const MyReservationPage = () => {
     setShowModal(true);
   };
 
-const confirmCancel = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    // 성공 시 프론트 상태 업데이트
-    setReservations(reservations.filter(r => r.id !== selectedReservation.id));
-    setModalStep('success');
-  } catch (err) {
-    console.error('❌ 예약 취소 실패:', err);
-    alert('Reservation cancel failed.');
-    closeModal();
-  }
-};
-
+  const confirmCancel = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/reservations/${selectedReservation._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setReservations(reservations.filter(r => r._id !== selectedReservation._id));
+      setModalStep('success');
+    } catch (err) {
+      console.error('❌ 예약 취소 실패:', err);
+      alert('Reservation cancel failed.');
+      closeModal();
+    }
+  };
 
   const closeModal = () => {
     setShowModal(false);
@@ -90,30 +109,37 @@ const confirmCancel = async () => {
       <main className="my-reservation-content">
         <h2>My reservation ({reservations.length})</h2>
         <div className="reservation-list">
-          {reservations.map((res) => (
-            <div key={res.id} className="reservation-card">
-              <img src={getBuildingImage(res.number)} alt={res.building} className="reservation-img" />
-              <div className="reservation-info">
-                <div className="reservation-building-number">No.{res.number}</div>
-                <div className="reservation-building">{res.building}</div>
-                <div className="reservation-detail">- {res.room} ({res.startTime}-{res.endTime}, {res.date})</div>
+          {reservations.map((res) => {
+            const buildingNo = getBuildingNo(res.building);
+            return (
+              <div key={res._id} className="reservation-card">
+                <img src={getBuildingImage(buildingNo)} alt={res.building} className="reservation-img" />
+                <div className="reservation-info">
+                  <div className="reservation-building-number">No.{buildingNo}</div>
+                  <div className="reservation-building">{res.building}</div>
+                  <div className="reservation-detail">
+                    - Room {res.room} ({res.startTime} - {res.endTime}, {res.date})
+                  </div>
+                </div>
+                <button className="cancel-button" onClick={() => handleCancel(res)}>
+                  Cancel Reservation →
+                </button>
               </div>
-              <button className="cancel-button" onClick={() => handleCancel(res)}>
-                Cancel Reservation →
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </main>
 
-      {showModal && (
+      {showModal && selectedReservation && (
         <Modal onClose={closeModal} size="medium">
           {modalStep === 'confirm' ? (
             <div>
               <div className="modal-card">
                 <div className="modal-title">{selectedReservation.building}</div>
-                <div className="modal-sub">{selectedReservation.room}</div>
-                <div className="modal-sub">- {selectedReservation.time}, {selectedReservation.date}</div>
+                <div className="modal-sub">Room {selectedReservation.room}</div>
+                <div className="modal-sub">
+                  - {selectedReservation.startTime} ~ {selectedReservation.endTime}, {selectedReservation.date}
+                </div>
               </div>
               <p style={{ marginTop: '24px' }}>Are you sure to cancel your reservation?</p>
               <div className="modal-buttons">
