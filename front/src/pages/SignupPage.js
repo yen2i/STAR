@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,8 +9,25 @@ const SignupPage = () => {
     name: '',
     studentNumber: '',
     password: '',
-    major: ''
+    major: '',
   });
+
+  const [departments, setDepartments] = useState([]);
+
+  // 학과 데이터 불러오기
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await fetch('/departments.json');
+        const data = await res.json();
+        const deptList = data.map(d => d.department);
+        setDepartments(deptList);
+      } catch (err) {
+        console.error('⚠️ 학과 데이터 로딩 실패:', err);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,12 +35,10 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
-      // 1. 실제 백엔드로 요청 시도
       await axios.post('http://localhost:5000/api/users/register', form);
       alert('회원가입 성공!');
       window.location.href = '/login';
     } catch (err) {
-      // 2. 서버 연결 실패시 -> 로컬 저장
       if (!err.response) {
         console.warn('⚠️ 서버 연결 실패. 로컬에 mock 회원 저장.');
         localStorage.setItem('mockUser', JSON.stringify(form));
@@ -41,17 +56,52 @@ const SignupPage = () => {
       <main className="signup-content">
         <div className="signup-box">
           <h2 className="signup-label">Sign in</h2>
-          {['name', 'studentNumber', 'password', 'major'].map((field) => (
-            <div className="input-wrapper" key={field}>
-              <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-              <input
-                name={field}
-                type={field === 'password' ? 'password' : 'text'}
-                placeholder={field}
-                onChange={handleChange}
-              />
-            </div>
-          ))}
+
+          {/* 이름 */}
+          <div className="input-wrapper">
+            <label>Name</label>
+            <input
+              name="name"
+              type="text"
+              placeholder="Enter your name"
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* 학번 */}
+          <div className="input-wrapper">
+            <label>Student Number</label>
+            <input
+              name="studentNumber"
+              type="text"
+              placeholder="Enter your student number"
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* 비밀번호 */}
+          <div className="input-wrapper">
+            <label>Password</label>
+            <input
+              name="password"
+              type="password"
+              placeholder="Enter password"
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* 전공 선택 */}
+          <div className="input-wrapper">
+            <label>Major</label>
+            <select name="major" value={form.major} onChange={handleChange}>
+              <option value="">Select your department</option>
+              {departments.map((dept, idx) => (
+                <option key={idx} value={dept}>{dept}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 회원가입 버튼 */}
           <div className="signup-button">
             <button onClick={handleSignup}>Sign in</button>
           </div>
