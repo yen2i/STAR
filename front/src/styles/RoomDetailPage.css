@@ -51,6 +51,13 @@
   box-sizing: border-box;
 }
 
+.cell.header {
+  background-color: #ffffff;
+  font-weight: bold;
+  position: relative;
+  z-index: 0; /* 모달보다 아래로 떨어뜨림 */
+}
+
 .time-label {
   width: 140px;
   font-weight: bold;
