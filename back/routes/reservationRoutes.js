@@ -6,10 +6,21 @@ const Reservation = require('../models/Reservation');
 const moment = require('moment'); // ⬅️ 날짜 계산용
 
 // 시간 ➝ 교시 매핑 (예: 08:00 → Period 0)
-const getPeriodFromTime = (time) => {
-  const hour = parseInt(time.split(':')[0]);
-  const periodMap = { 8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 6, 15: 7, 16: 8, 17: 9 };
-  return periodMap[hour];
+const getPeriodsFromRange = (startTime, endTime) => {
+  const periodMap = {
+    8: 0, 9: 1, 10: 2, 11: 3,
+    12: 4, 13: 5, 14: 6, 15: 7,
+    16: 8, 17: 9
+  };
+  const startHour = parseInt(startTime.split(':')[0]);
+  const endHour = parseInt(endTime.split(':')[0]);
+
+  const startPeriod = periodMap[startHour];
+  const endPeriod = periodMap[endHour];
+
+  if (startPeriod === undefined || endPeriod === undefined || startPeriod >= endPeriod) return [];
+
+  return Array.from({ length: endPeriod - startPeriod + 1 }, (_, i) => startPeriod + i);
 };
 
 router.post('/', authMiddleware, async (req, res) => {
@@ -20,24 +31,19 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 
   try {
-    const period = getPeriodFromTime(startTime);
+    const periods = getPeriodsFromRange(startTime, endTime);
     const dayOfWeek = moment(date).format('ddd'); // "Mon", "Tue", ...
 
-    // ✅ 중복 예약 체크
-    const overlapping = await Reservation.findOne({
+    // 중복 예약 체크
+    const overlapping = await Reservation.find({
       building,
       room,
       date,
-      $expr: {
-        $and: [
-          { $lt: ["$startTime", endTime] },
-          { $gt: ["$endTime", startTime] }
-        ]
-      }
+      dayOfWeek,
+      periods: { $in: periods }  // 겹치는 교시가 하나라도 있으면 탐지
     });
-
-    if (overlapping) {
-      return res.status(409).json({ message: 'This time is already reserved' });
+    if (overlapping.length > 0) {
+      return res.status(409).json({ message: 'Some periods are already reserved' });
     }
 
     const newReservation = new Reservation({
@@ -48,7 +54,7 @@ router.post('/', authMiddleware, async (req, res) => {
       startTime,
       endTime,
       dayOfWeek,
-      period
+      periods
     });
 
     await newReservation.save();

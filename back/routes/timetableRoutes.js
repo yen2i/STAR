@@ -23,22 +23,20 @@ router.get('/availability', async (req, res) => {
   }
 
   try {
-    // 1️⃣ 수업 시간표에서 'unavailable' 표시
+    // 1수업 시간표에서 'unavailable' 표시
     const timetables = await Timetable.find({});
 
     timetables.forEach(dept => {
       dept.lectures.forEach(lecture => {
-        const { room: lectureRoom, time } = lecture;
-
-        // 강의실 파싱: "Davinci Hall(039)-104" → "Davinci Hall", "104"
+        const { room: lectureRoom, time, subject } = lecture;
+    
         const match = lectureRoom.match(/^(.+?)\(\d+\)-(\d+)$/);
         if (!match) return;
         const lectureBuilding = match[1].trim();
         const lectureRoomNumber = match[2].trim();
-
+    
         if (lectureBuilding !== building || lectureRoomNumber !== room) return;
-
-        // 📌 시간 파싱: "Thu(3 ~ 4), Tue(5)"
+    
         const timeSlots = time.split(',').map(s => s.trim());
         timeSlots.forEach(slot => {
           const m = slot.match(/(\w+)\((\d)(?: ~ (\d))?\)/);
@@ -46,10 +44,13 @@ router.get('/availability', async (req, res) => {
             const day = m[1];
             const startP = parseInt(m[2]);
             const endP = parseInt(m[3] || m[2]);
-
+    
             for (let p = startP; p <= endP; p++) {
               if (availability[day] && availability[day][`Period ${p}`]) {
-                availability[day][`Period ${p}`] = 'unavailable';
+                availability[day][`Period ${p}`] = {
+                  status: 'unavailable',
+                  subject: subject
+                };
               }
             }
           }
@@ -57,7 +58,7 @@ router.get('/availability', async (req, res) => {
       });
     });
 
-    // 2️⃣ 예약 정보로 'unavailable' 표시
+    // 2️예약 정보로 'unavailable' 표시
     const dateRange = [];
     for (let i = 0; i < 5; i++) {
       dateRange.push(startDate.clone().add(i, 'days').format('YYYY-MM-DD'));
@@ -69,7 +70,7 @@ router.get('/availability', async (req, res) => {
       date: { $in: dateRange }
     });
 
-    // 📌 시간 → Period로 매핑 (시간 기준은 08:00 ~ 17:50까지 10개)
+    // 시간 → Period로 매핑 (시간 기준은 08:00 ~ 17:50까지 10개)
     const hourToPeriod = {
       8: 0, 9: 1, 10: 2, 11: 3,
       12: 4, 13: 5, 14: 6, 15: 7,
