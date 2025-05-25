@@ -23,7 +23,7 @@ router.post('/', authMiddleware, async (req, res) => {
     const period = getPeriodFromTime(startTime);
     const dayOfWeek = moment(date).format('ddd'); // "Mon", "Tue", ...
 
-    // ✅ 중복 예약 체크
+    // 중복 예약 체크
     const overlapping = await Reservation.findOne({
       building,
       room,
