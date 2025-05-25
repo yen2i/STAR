@@ -14,7 +14,7 @@
 .modal-box {
   background: #ffffff;
   border-radius: 12px;
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
   animation: fadeIn 0.25s ease-in-out;
@@ -118,10 +118,6 @@
 }
 
 @media (max-width: 600px) {
-  .modal-box {
-    width: 90%;
-    padding: 16px;
-  }
 
   .modal-card {
     padding: 16px;
@@ -143,7 +139,7 @@
 
   .modal-buttons button {
     width: 100%;
-    font-size: 15px;
+    font-size: 1px;
     padding: 10px 20px;
   }
 
@@ -152,7 +148,7 @@
   }
 
   .room-row {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 8px;
     padding: 10px;

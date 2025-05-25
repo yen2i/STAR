@@ -30,13 +30,13 @@ const MainPage = () => {
         <div className="logo-box">
           <img src={starLogo} alt="STAR Logo" className="logo-image" />
           <div className="sub-title">
-            <span style={{ color: '#D32024' }}>S</span>
+            <span style={{ color: '#C62828' }}>S</span>
             <span>eoul </span>
-            <span style={{ color: '#062A50' }}>T</span>
+            <span style={{ color: '#210cdc' }}>T</span>
             <span>ech </span>
-            <span style={{ color: '#D32024' }}>A</span>
+            <span style={{ color: '#9c9c9c' }}>A</span>
             <span>vailable </span>
-            <span style={{ color: '#1E1759' }}>R</span>
+            <span style={{ color: '#9c9c9c' }}>R</span>
             <span>oom</span>
           </div>
         </div>
