@@ -36,7 +36,7 @@
   padding: 24px;
   border-radius: 16px;
   border: 1px solid #ccc;
-  background: #F7F7F7;
+  background: #fffefe;
   margin-bottom: 40px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   gap: 24px;
@@ -70,7 +70,7 @@
   padding: 24px;
   border-radius: 16px;
   border: 1px solid #ccc;
-  background: #F7F7F7;
+  background: #fffefe;
   margin-bottom: 40px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }

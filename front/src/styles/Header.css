@@ -1,18 +1,26 @@
 .header {
-    padding: 0 25px;
-    height: 100px; 
-    border-bottom: 1px solid rgb(231, 231, 231);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #E3E3E3;
-    box-shadow: 0px 4px 10px 5px rgba(229, 229, 229, 0.25);
-    box-sizing: border-box;
-  }
+  position: sticky;               /* 상단 고정 */
+  top: 0;
+  z-index: 1000; 
+
+  padding: 0 25px;
+  height: 100px; 
+  border-bottom: 1px solid rgb(231, 231, 231);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: rgba(255, 255, 255, 0.75); /* 반투명 흰색 */
+  backdrop-filter: blur(2px);                 /* 배경 흐림 효과 */
+
+  box-shadow: 0px 4px 10px 5px rgba(233, 233, 233, 0.25);
+  box-sizing: border-box;
+}
   
   .logo {
-    height: 100px;
+    height: 85px;
     width: auto;
+    transform: translateY(-4px);    
     cursor: pointer;
     filter: drop-shadow(0 4px 8px #fffb839f);
   }
@@ -37,6 +45,9 @@
     .header {
       padding: 0 16px;
       height: 80px; 
+
+      background-color: rgba(255, 255, 255, 0.75); 
+      backdrop-filter: blur(6px);
     }
   
     .logo {
@@ -44,7 +55,7 @@
     }
   
     .nav {
-      gap: 12px;
+      gap: 10px;
     }
   
     .link {
