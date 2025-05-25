@@ -37,7 +37,7 @@ const MOCK_TIMETABLE = [
 ];
 
 const RoomDetailPage = () => {
-  const { roomId } = useParams();
+  const { building, roomId } = useParams();
   const navigate = useNavigate();
   const [startOfWeek, setStartOfWeek] = useState(getStartOfWeek(new Date()));
   const [grid, setGrid] = useState(Array.from({ length: periods.length }, () => Array(dayLabels.length).fill(0)));
@@ -46,7 +46,6 @@ const RoomDetailPage = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [timetable, setTimetable] = useState([]);
 
-  const building = 'Frontier Hall';
   const room = roomId;
 
   function getStartOfWeek(date) {
@@ -151,7 +150,7 @@ const RoomDetailPage = () => {
         className={`cell ${isUnavailable ? 'unavailable' : isSelected ? 'selected' : 'available'}`}
         onClick={() => !isUnavailable && handleClick(r, c)}
       >
-        {isUnavailable ? title : isSelected ? '✓' : ''}
+        {isUnavailable ? title : isSelected ? 'checked!' : ''}
       </div>
     );
   };

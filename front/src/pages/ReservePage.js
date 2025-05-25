@@ -129,7 +129,7 @@ const ReservePage = () => {
   const handleRoomSelect = (room) => {
     setShowModal(false);
     const roomNumber = room.room.match(/\d+/)?.[0];
-    navigate(`/reserve/${roomNumber}`);
+    navigate(`/reserve/${selectedBuilding.name}/${roomNumber}`);
   };
 
   const filteredBuildings = buildings.filter(b =>
