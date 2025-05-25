@@ -13,7 +13,7 @@ const reservationSchema = new mongoose.Schema({
 
   // 시간표 매핑용 교시 정보
   dayOfWeek: { type: String, required: true },  // e.g., "Mon", "Tue"
-  period: { type: Number, required: true },     // e.g., 0 ~ 9
+  periods: { type: [Number], required: true },     // e.g., 0 ~ 9
 
   createdAt: {
     type: Date,
@@ -23,7 +23,7 @@ const reservationSchema = new mongoose.Schema({
 
 // 중복 방지 인덱스 (동일한 건물/강의실/날짜/요일/교시에는 하나만 가능)
 reservationSchema.index(
-  { building: 1, room: 1, date: 1, dayOfWeek: 1, period: 1 },
+  { building: 1, room: 1, date: 1, dayOfWeek: 1, periods: 1 },
   { unique: true }
 );
 
