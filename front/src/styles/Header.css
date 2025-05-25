@@ -12,6 +12,7 @@
 
   background-color: rgba(255, 255, 255, 0.75); /* 반투명 흰색 */
   backdrop-filter: blur(2px);                 /* 배경 흐림 효과 */
+  -webkit-backdrop-filter: blur(2px);
 
   box-shadow: 0px 4px 10px 5px rgba(233, 233, 233, 0.25);
   box-sizing: border-box;
@@ -43,11 +44,12 @@
   /*모바일 */
   @media (max-width: 600px) {
     .header {
-      padding: 0 16px;
+      padding: 0 13px;
       height: 80px; 
 
       background-color: rgba(255, 255, 255, 0.75); 
       backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(2px);
     }
   
     .logo {
@@ -56,6 +58,7 @@
   
     .nav {
       gap: 10px;
+      margin-right: 10px;
     }
   
     .link {
