@@ -150,7 +150,7 @@ const RoomDetailPage = () => {
         className={`cell ${isUnavailable ? 'unavailable' : isSelected ? 'selected' : 'available'}`}
         onClick={() => !isUnavailable && handleClick(r, c)}
       >
-        {isUnavailable ? title : isSelected ? '✓' : ''}
+        {isUnavailable ? title : isSelected ? 'checked!' : ''}
       </div>
     );
   };
