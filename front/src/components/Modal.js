@@ -8,9 +8,8 @@ const Modal = ({ onClose, children, size = 'medium' }) => {
         className={`modal-box modal-${size}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 모든 모달에 공통 적용되는 X 버튼 */}
-        <button className="modal-close" onClick={onClose}>×</button>
-        <div className="modal-content">
+        <button className="modal-close-button" onClick={onClose}>×</button>
+        <div className="modal-content-scrollable">
           {children}
         </div>
       </div>
