@@ -80,11 +80,17 @@ router.get('/availability', async (req, res) => {
     reservations.forEach(r => {
       const date = moment(r.date);
       const day = DAYS[date.diff(startDate, 'days')];
+    
       const startHour = parseInt(r.startTime.split(':')[0]);
-
-      const period = hourToPeriod[startHour];
-      if (day && period !== undefined) {
-        availability[day][`Period ${period}`] = 'unavailable';
+      const endHour = parseInt(r.endTime.split(':')[0]);
+    
+      const startPeriod = hourToPeriod[startHour];
+      const endPeriod = hourToPeriod[endHour];
+    
+      if (day && startPeriod !== undefined && endPeriod !== undefined) {
+        for (let p = startPeriod; p < endPeriod; p++) {
+          availability[day][`Period ${p}`] = { status: 'unavailable' }; // 예약은 subject 없음
+        }
       }
     });
 
