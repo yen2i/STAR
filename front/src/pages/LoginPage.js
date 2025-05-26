@@ -38,33 +38,57 @@ const LoginPage = () => {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault(); // ⛔ 새로고침 방지
+    handleLogin();      // ✅ 로그인 실행
+  };
+
   return (
     <div className="login-page">
       <Header />
       <main className="login-content">
         <div className="login-title-wrapper">
-        <h1 className="login-title">
-          <span className="r">S</span>eoul{' '}
-          <span className="b">T</span>ech{' '}
-          <span className="g">A</span>vailable{' '}
-          <span className="g">R</span>oom
-        </h1>
+          <h1 className="login-title">
+            <span className="r">S</span>eoul{' '}
+            <span className="b">T</span>ech{' '}
+            <span className="g">A</span>vailable{' '}
+            <span className="g">R</span>oom
+          </h1>
         </div>
-        <div className="login-box">
+
+        {/* ✅ form으로 감싸고 onSubmit 적용 */}
+        <form className="login-box" onSubmit={handleSubmit}>
           <h2 className="login-label">Log in</h2>
+
           <div className="login-input-wrapper">
             <img src={signstudentnumber} alt="student number" className="input-icon" />
-            <input name="studentNumber" type="text" placeholder="Student Number" onChange={handleChange} />
+            <input
+              name="studentNumber"
+              type="text"
+              placeholder="Student Number"
+              onChange={handleChange}
+              value={form.studentNumber}
+              required
+            />
           </div>
+
           <div className="login-input-wrapper">
             <img src={signpassward} alt="password" className="input-icon" />
-            <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              onChange={handleChange}
+              value={form.password}
+              required
+            />
           </div>
+
           <div className="login-buttons">
-            <button onClick={handleLogin}>Log in</button>
-            <button onClick={() => navigate('/signup')}>Sign in</button>
+            <button type="submit">Log in</button> {/* ✅ 기본 로그인 버튼 */}
+            <button type="button" onClick={() => navigate('/signup')}>Sign in</button>
           </div>
-        </div>
+        </form>
       </main>
       <Footer />
     </div>
