@@ -1,3 +1,5 @@
+// 🛠️ RoomDetailPage.js (예약 범위 반영 전체 버전)
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -23,29 +25,18 @@ const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const dayKor = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const startTimes = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
-const MOCK_AVAILABILITY = {
-  Mon: { 'Period 0': 'unavailable', 'Period 1': 'unavailable' },
-  Tue: { 'Period 2': 'unavailable' },
-  Wed: {},
-  Thu: {},
-  Fri: {},
-};
-
-const MOCK_TIMETABLE = [
-  { room: 'Frontier Hall(107)', time: 'Mon(0 ~ 1)', subject: 'Data Mining' },
-  { room: 'Frontier Hall(107)', time: 'Tue(2 ~ 2)', subject: 'Web Programming' },
-];
-
 const RoomDetailPage = () => {
   const { building, roomId } = useParams();
   const navigate = useNavigate();
   const [startOfWeek, setStartOfWeek] = useState(getStartOfWeek(new Date()));
-  const [grid, setGrid] = useState(Array.from({ length: periods.length }, () => Array(dayLabels.length).fill(0)));
+  const [grid, setGrid] = useState(
+    Array.from({ length: periods.length }, () =>
+      Array.from({ length: dayLabels.length }, () => ({ status: 'available' }))
+    )
+  );
   const [selected, setSelected] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [timetable, setTimetable] = useState([]);
-
   const room = roomId;
 
   function getStartOfWeek(date) {
@@ -78,7 +69,7 @@ const RoomDetailPage = () => {
 
   const handleClick = (row, col) => {
     const key = `${row}-${col}`;
-    if (grid[row][col] === 1) return;
+    if (grid[row][col].status === 'unavailable') return;
     if (selected.includes(key)) {
       setSelected(selected.filter(k => k !== key));
     } else {
@@ -98,59 +89,61 @@ const RoomDetailPage = () => {
       });
       applyGridFromAvailability(res.data.availability);
     } catch (err) {
-      console.warn('⚠️ API failed, using mock availability');
-      applyGridFromAvailability(MOCK_AVAILABILITY);
-    }
-  };
-
-  const fetchTimetable = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/api/timetable');
-      setTimetable(res.data);
-    } catch (err) {
-      console.warn('⚠️ Timetable API failed, using mock');
-      setTimetable(MOCK_TIMETABLE);
+      console.warn('⚠️ API failed');
     }
   };
 
   const applyGridFromAvailability = (data) => {
-    const newGrid = grid.map(row => [...row]);
-    dayLabels.forEach((day, c) => {
-      periods.forEach((_, r) => {
-        const status = data[day]?.[`Period ${r}`];
-        newGrid[r][c] = status === 'unavailable' ? 1 : 0;
-      });
-    });
+    const newGrid = Array.from({ length: periods.length }, (_, r) =>
+      Array.from({ length: dayLabels.length }, (_, c) => {
+        const slot = data[dayLabels[c]]?.[`Period ${r}`];
+
+        if (typeof slot === 'object' && slot.status === 'unavailable') {
+          return {
+            status: 'unavailable',
+            subject: slot.subject || null
+          };
+        } else if (slot === 'unavailable') {
+          return { status: 'unavailable' };
+        } else {
+          return { status: 'available' };
+        }
+      })
+    );
     setGrid(newGrid);
   };
 
   useEffect(() => {
     fetchAvailability();
-    fetchTimetable();
   }, [startOfWeek]);
-
-  const findLectureTitle = (room, day, period) => {
-    return (
-      timetable.find(
-        (lec) => lec.room?.includes(room) && lec.time?.includes(day) && lec.time?.match(/\d+/g)?.includes(String(period))
-      )?.subject || ''
-    );
-  };
 
   const renderCell = (r, c) => {
     const key = `${r}-${c}`;
-    const isUnavailable = grid[r][c] === 1;
+    const cell = grid[r][c];
     const isSelected = selected.includes(key);
-    const dayLabel = dayLabels[c];
-    const title = isUnavailable ? findLectureTitle(room, dayLabel, r) : '';
+    const isUnavailable = cell.status === 'unavailable';
+
+    const today = new Date();
+    const cellDate = new Date(startOfWeek);
+    cellDate.setDate(cellDate.getDate() + c);
+
+    const isPast = cellDate < new Date(today.toDateString()) ||
+      (cellDate.toDateString() === today.toDateString() && r < today.getHours() - 8);
+
+    let content = '';
+    if (isUnavailable) {
+      content = cell.subject ? `📘 ${cell.subject}` : 'Reserved';
+    } else if (isSelected) {
+      content = 'Selected ✓';
+    }
 
     return (
       <div
         key={c}
-        className={`cell ${isUnavailable ? 'unavailable' : isSelected ? 'selected' : 'available'}`}
-        onClick={() => !isUnavailable && handleClick(r, c)}
+        className={`cell ${isPast ? 'unavailable' : isUnavailable ? 'unavailable' : isSelected ? 'selected' : 'available'}`}
+        onClick={() => !isUnavailable && !isPast && handleClick(r, c)}
       >
-        {isUnavailable ? title : isSelected ? 'checked!' : ''}
+        {content}
       </div>
     );
   };
@@ -161,7 +154,7 @@ const RoomDetailPage = () => {
     const date = getDateByCol(c);
     const startTime = startTimes[r];
     const endTime = startTimes[r + selected.length] || '18:00';
-
+  
     try {
       await axios.post(
         'http://localhost:5000/api/reservations',
@@ -171,11 +164,17 @@ const RoomDetailPage = () => {
       setShowConfirm(false);
       setShowSuccess(true);
     } catch (err) {
-      console.error(err);
       setShowConfirm(false);
-      setShowSuccess(true);
+  
+      if (err.response && err.response.status === 409) {
+        // 💥 예약 중복된 경우
+        alert('You have already made a reservation for this date. Only one reservation per day is allowed.');
+      } else {
+        alert('An error occurred while making the reservation. Please try again later.');
+      }
     }
   };
+  
 
   return (
     <div className="room-detail-page">
@@ -230,7 +229,14 @@ const RoomDetailPage = () => {
         )}
 
         {showSuccess && (
-          <Modal onClose={() => setShowSuccess(false)} size="medium">
+          <Modal
+            onClose={() => {
+              setShowSuccess(false);      // 모달 닫기
+              fetchAvailability();        // 예약 데이터 다시 반영
+              setSelected([]);            // 선택했던 칸들 초기화
+            }}
+            size="medium"
+          >
             <h3>Reservation completed successfully!</h3>
             <button onClick={() => navigate('/my-reservation')}>Check Reservation</button>
           </Modal>
