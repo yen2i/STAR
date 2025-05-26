@@ -1,28 +1,27 @@
-.header {
-  position: sticky;               /* 상단 고정 */
-  top: 0;
-  z-index: 1000; 
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-  padding: 0 25px;
-  height: 100px; 
-  border-bottom: 1px solid rgb(231, 231, 231);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    background-color: rgba(255, 255, 255, 0.75); /* 반투명 */
+    backdrop-filter: blur(6px);                 /* 블러 효과 */
+    -webkit-backdrop-filter: blur(6px);
 
-  background-color: rgba(255, 255, 255, 0.75); /* 반투명 흰색 */
-  backdrop-filter: blur(2px);                 /* 배경 흐림 효과 */
+    border-bottom: 1px solid #e7e7e7;
+    box-shadow: 0px 4px 10px 5px rgba(233, 233, 233, 0.2);
+  }
 
-  box-shadow: 0px 4px 10px 5px rgba(233, 233, 233, 0.25);
-  box-sizing: border-box;
-}
-  
   .logo {
-    height: 85px;
+    height: 80px;
     width: auto;
-    transform: translateY(-4px);    
     cursor: pointer;
     filter: drop-shadow(0 4px 8px #fffb839f);
+    margin-top: 2px;
+    margin-bottom: 7px;
   }
   
   .nav {
@@ -39,27 +38,62 @@
     font-weight: lighter;
     text-decoration: underline;
   }
-  
+
+  .menu {
+    display: none;
+    font-size: 25px;
+    cursor: pointer;
+    padding: 10px;
+    user-select: none;
+    color:darkslateblue;
+    transition: color 0.2s ease;
+  }
+
+  .menu:hover{
+    color:rgb(174, 174, 174);
+  }
+
   /*모바일 */
   @media (max-width: 600px) {
     .header {
-      padding: 0 16px;
+      padding: 0 13px;
       height: 80px; 
 
       background-color: rgba(255, 255, 255, 0.75); 
       backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(2px);
     }
   
     .logo {
-      height: 50px;
+      height: 55px;
     }
   
-    .nav {
-      gap: 10px;
-    }
-  
-    .link {
-      font-size: 14px;
-      white-space: nowrap; 
-    }
+  .menu {
+    display: block;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1100;
   }
+
+  .nav {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background-color: white;
+    flex-direction: column;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+  }
+
+  .nav.open {
+    display: flex;
+  }
+
+  .link {
+    font-size: 14px;
+    padding: 6px 0;
+  }
+}
