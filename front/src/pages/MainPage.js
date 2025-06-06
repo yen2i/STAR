@@ -44,6 +44,7 @@ const MainPage = () => {
         {/* 버튼 묶음 */}
         <div className="main-buttons">
           <button onClick={handleBookClick}>Book a Classroom Now →</button>
+          <button onClick={() => navigate('/hotspot')}> View Hotspot Buildings →</button>
           <button onClick={handleMapClick}>View Classroom Map →</button>
         </div>
       </main>
