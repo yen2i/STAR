@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import '../styles/RoomDetailPage.css';
+import PurposeModal from '../components/PurposeModal'; // 목적 모달 컴포넌트
 
 const periods = [
   'Period 0 (8:00 - 8:50)',
@@ -28,6 +29,10 @@ const startTimes = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00
 const RoomDetailPage = () => {
   const { building, roomId } = useParams();
   const navigate = useNavigate();
+
+  const [showPurposeModal, setShowPurposeModal] = useState(false);
+  const [purposeInfo, setPurposeInfo] = useState(null); // 선택된 인원수와 목적 저장
+
   const [startOfWeek, setStartOfWeek] = useState(getStartOfWeek(new Date()));
   const [grid, setGrid] = useState(
     Array.from({ length: periods.length }, () =>
@@ -158,7 +163,7 @@ const RoomDetailPage = () => {
     try {
       await axios.post(
         'http://localhost:5000/api/reservations',
-        { building, room, date, startTime, endTime },
+        { building, room, date, startTime, endTime }, //목적이랑 인원 추가해야함~~~!!!!!!
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
       setShowConfirm(false);
@@ -222,12 +227,23 @@ const RoomDetailPage = () => {
             })()}
             <p>Are you sure to confirm your reservation?</p>
             <div className="modal-buttons">
-              <button onClick={handleReservation}>Yes</button>
+              <button onClick={() => {
+                setShowConfirm(false);        // 예약 확인 모달 닫기
+                setShowPurposeModal(true);   // 목적 입력 모달 열기
+              }}>Yes</button>
               <button onClick={() => setShowConfirm(false)}>No</button>
             </div>
           </Modal>
         )}
-
+        {showPurposeModal && (
+          <PurposeModal
+            onClose={() => setShowPurposeModal(false)}
+            onSubmit={(info) => {
+              setPurposeInfo(info);
+              handleReservation(info); // 목적 정보와 함께 예약 진행
+            }}
+          />
+        )}        
         {showSuccess && (
           <Modal
             onClose={() => {

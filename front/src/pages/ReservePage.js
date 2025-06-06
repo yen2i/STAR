@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Modal from '../components/Modal';
+import BuildingCard from '../components/BuildingCard';
+import RoomSelectModal from '../components/RoomSelectModal'; // ⭐ 분리된 모달
 import '../styles/ReservePage.css';
-import filledStar from '../assets/icons/star-filled.png';
-import emptyStar from '../assets/icons/star-empty.png';
 
 const getBuildingImage = (id) => {
   try {
@@ -139,26 +138,6 @@ const ReservePage = () => {
   const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.name));
   const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.name));
 
-  const renderBuildingCard = (building) => (
-    <div className="building-card" key={building.id}>
-      <img src={building.image} alt={building.name} className="building-img" />
-      <div className="building-info">
-        <div className="building-number">No. {building.id}</div>
-        <div className="building-name">{building.name}</div>
-        <div className="available-cunot">
-          🟢 Available Rooms ({building.availableRooms.length})
-        </div>
-      </div>
-      <button className="reserve-btn" onClick={() => openRoomModal(building)}>Reserve Now →</button>
-      <img
-        src={favoriteIds.includes(building.name) ? filledStar : emptyStar}
-        alt="favorite"
-        className="star-icon"
-        onClick={() => toggleFavorite(building.name)}
-      />
-    </div>
-  );
-
   return (
     <div className="reserve-page">
       <Header />
@@ -176,7 +155,15 @@ const ReservePage = () => {
           <section>
             <h3>Favorite Classrooms</h3>
             <div className="building-list">
-              {favoriteBuildings.map(renderBuildingCard)}
+              {favoriteBuildings.map((building) => (
+                <BuildingCard
+                  key={building.id}
+                  building={building}
+                  isFavorite={true}
+                  onReserveClick={openRoomModal}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ))}
             </div>
           </section>
         )}
@@ -184,29 +171,24 @@ const ReservePage = () => {
         <section>
           <h3>Buildings</h3>
           <div className="building-list">
-            {nonFavoriteBuildings.map(renderBuildingCard)}
+            {nonFavoriteBuildings.map((building) => (
+              <BuildingCard
+                key={building.id}
+                building={building}
+                isFavorite={false}
+                onReserveClick={openRoomModal}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
           </div>
         </section>
       </main>
 
-      {showModal && selectedBuilding && (
-        <Modal onClose={() => setShowModal(false)}>
-          <div className="modal-box">
-            <div className="building-number">No. {selectedBuilding.id}</div>
-            <div className="modal-building-box">
-              <img src={selectedBuilding.image} alt={selectedBuilding.name} />
-              <h3>{selectedBuilding.name}</h3>
-            </div>
-            <p className="modal-label">Available Rooms ({selectedBuilding.availableRooms.length})</p>
-            {selectedBuilding.availableRooms.map((room, i) => (
-              <div key={i} className="room-row">
-                <span>{room.room} <span className="green-dot" /></span>
-                <button onClick={() => handleRoomSelect(room)}>Reserve Now →</button>
-              </div>
-            ))}
-          </div>
-        </Modal>
-      )}
+      <RoomSelectModal
+        building={selectedBuilding}
+        onClose={() => setShowModal(false)}
+        onSelectRoom={handleRoomSelect}
+      />
 
       <Footer />
     </div>

@@ -1,0 +1,68 @@
+/* src/styles/PurposeModal.css */
+.purpose-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .purpose-modal {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px 32px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .modal-field {
+    margin: 16px 0;
+    text-align: left;
+  }
+  
+  .modal-field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .modal-field select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+  }
+  
+  .modal-buttons button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #0077cc;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  
+  .modal-buttons button.cancel {
+    background-color: #ccc;
+  }
+  
+  .modal-buttons button:hover {
+    background-color: #005fa3;
+  }
+  
