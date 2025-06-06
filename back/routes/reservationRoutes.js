@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const Reservation = require('../models/Reservation');
+const ReservationMeta = require('../models/ReservationMeta');
 
 const moment = require('moment'); // ⬅️ 날짜 계산용
 
@@ -24,7 +25,7 @@ const getPeriodsFromRange = (startTime, endTime) => {
 };
 
 router.post('/', authMiddleware, async (req, res) => {
-  const { building, room, date, startTime, endTime } = req.body;
+  const { building, room, date, startTime, endTime, purpose, peopleCount } = req.body;
 
   if (!building || !room || !date || !startTime || !endTime) {
     return res.status(400).json({ message: 'All fields are required' });
@@ -58,6 +59,14 @@ router.post('/', authMiddleware, async (req, res) => {
     });
 
     await newReservation.save();
+
+    const newMeta = new ReservationMeta({
+      reservation: newReservation._id,
+      purpose,
+      peopleCount
+    });
+  
+    await newMeta.save();
 
     res.status(201).json({
       message: 'Reservation completed successfully!',
