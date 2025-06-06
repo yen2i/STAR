@@ -1,25 +1,17 @@
-// 🛠️ RoomDetailPage.js (예약 범위 반영 전체 버전)
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
+import PurposeModal from '../components/PurposeModal';
 import '../styles/RoomDetailPage.css';
-import PurposeModal from '../components/PurposeModal'; // 목적 모달 컴포넌트
 
 const periods = [
-  'Period 0 (8:00 - 8:50)',
-  'Period 1 (9:00 - 9:50)',
-  'Period 2 (10:00 - 10:50)',
-  'Period 3 (11:00 - 11:50)',
-  'Period 4 (12:00 - 12:50)',
-  'Period 5 (13:00 - 13:50)',
-  'Period 6 (14:00 - 14:50)',
-  'Period 7 (15:00 - 15:50)',
-  'Period 8 (16:00 - 16:50)',
-  'Period 9 (17:00 - 17:50)',
+  'Period 0 (8:00 - 8:50)', 'Period 1 (9:00 - 9:50)', 'Period 2 (10:00 - 10:50)',
+  'Period 3 (11:00 - 11:50)', 'Period 4 (12:00 - 12:50)', 'Period 5 (13:00 - 13:50)',
+  'Period 6 (14:00 - 14:50)', 'Period 7 (15:00 - 15:50)', 'Period 8 (16:00 - 16:50)',
+  'Period 9 (17:00 - 17:50)'
 ];
 
 const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -31,17 +23,17 @@ const RoomDetailPage = () => {
   const navigate = useNavigate();
 
   const [showPurposeModal, setShowPurposeModal] = useState(false);
-  const [purposeInfo, setPurposeInfo] = useState(null); // 선택된 인원수와 목적 저장
-
+  const [purposeInfo, setPurposeInfo] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [startOfWeek, setStartOfWeek] = useState(getStartOfWeek(new Date()));
+  const [selected, setSelected] = useState([]);
   const [grid, setGrid] = useState(
     Array.from({ length: periods.length }, () =>
       Array.from({ length: dayLabels.length }, () => ({ status: 'available' }))
     )
   );
-  const [selected, setSelected] = useState([]);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+
   const room = roomId;
 
   function getStartOfWeek(date) {
@@ -102,12 +94,8 @@ const RoomDetailPage = () => {
     const newGrid = Array.from({ length: periods.length }, (_, r) =>
       Array.from({ length: dayLabels.length }, (_, c) => {
         const slot = data[dayLabels[c]]?.[`Period ${r}`];
-
         if (typeof slot === 'object' && slot.status === 'unavailable') {
-          return {
-            status: 'unavailable',
-            subject: slot.subject || null
-          };
+          return { status: 'unavailable', subject: slot.subject || null };
         } else if (slot === 'unavailable') {
           return { status: 'unavailable' };
         } else {
@@ -131,7 +119,6 @@ const RoomDetailPage = () => {
     const today = new Date();
     const cellDate = new Date(startOfWeek);
     cellDate.setDate(cellDate.getDate() + c);
-
     const isPast = cellDate < new Date(today.toDateString()) ||
       (cellDate.toDateString() === today.toDateString() && r < today.getHours() - 8);
 
@@ -153,33 +140,40 @@ const RoomDetailPage = () => {
     );
   };
 
-  const handleReservation = async () => {
+  const handleReservation = async (info) => {
     if (selected.length === 0) return alert('Please select at least one slot.');
     const [r, c] = selected[0].split('-').map(Number);
     const date = getDateByCol(c);
     const startTime = startTimes[r];
     const endTime = startTimes[r + selected.length] || '18:00';
-  
+
     try {
       await axios.post(
         'http://localhost:5000/api/reservations',
-        { building, room, date, startTime, endTime }, //목적이랑 인원 추가해야함~~~!!!!!!
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        {
+          building,
+          room,
+          date,
+          startTime,
+          endTime,
+          purpose: info.purpose,
+          peopleCount: info.peopleCount
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
       );
       setShowConfirm(false);
       setShowSuccess(true);
     } catch (err) {
       setShowConfirm(false);
-  
       if (err.response && err.response.status === 409) {
-        // 💥 예약 중복된 경우
         alert('You have already made a reservation for this date. Only one reservation per day is allowed.');
       } else {
         alert('An error occurred while making the reservation. Please try again later.');
       }
     }
   };
-  
 
   return (
     <div className="room-detail-page">
@@ -209,12 +203,23 @@ const RoomDetailPage = () => {
                 {dayLabels.map((_, c) => renderCell(r, c))}
               </div>
             ))}
-           </div>
+          </div>
         </div>
 
         <div className="calendar-actions">
-          <button className="reserve-btn" onClick={() => setShowConfirm(true)}>Make a Reservation →</button>
+          <button className="reserve-btn" onClick={() => setShowPurposeModal(true)}>Make a Reservation →</button>
         </div>
+
+        {showPurposeModal && (
+          <PurposeModal
+            onClose={() => setShowPurposeModal(false)}
+            onSubmit={(info) => {
+              setPurposeInfo(info);
+              setShowPurposeModal(false);
+              setShowConfirm(true);
+            }}
+          />
+        )}
 
         {showConfirm && selected.length > 0 && (
           <Modal onClose={() => setShowConfirm(false)} size="medium">
@@ -229,29 +234,18 @@ const RoomDetailPage = () => {
             })()}
             <p>Are you sure to confirm your reservation?</p>
             <div className="modal-buttons">
-              <button onClick={() => {
-                setShowConfirm(false);        // 예약 확인 모달 닫기
-                setShowPurposeModal(true);   // 목적 입력 모달 열기
-              }}>Yes</button>
+              <button onClick={() => handleReservation(purposeInfo)}>Yes</button>
               <button onClick={() => setShowConfirm(false)}>No</button>
             </div>
           </Modal>
         )}
-        {showPurposeModal && (
-          <PurposeModal
-            onClose={() => setShowPurposeModal(false)}
-            onSubmit={(info) => {
-              setPurposeInfo(info);
-              handleReservation(info); // 목적 정보와 함께 예약 진행
-            }}
-          />
-        )}        
+
         {showSuccess && (
           <Modal
             onClose={() => {
-              setShowSuccess(false);      // 모달 닫기
-              fetchAvailability();        // 예약 데이터 다시 반영
-              setSelected([]);            // 선택했던 칸들 초기화
+              setShowSuccess(false);
+              fetchAvailability();
+              setSelected([]);
             }}
             size="medium"
           >
