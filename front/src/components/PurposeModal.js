@@ -24,10 +24,10 @@ const PurposeModal = ({ onClose, onSubmit }) => {
           <label>Number of People</label>
           <select value={people} onChange={(e) => setPeople(e.target.value)}>
             <option value="">Select</option>
-            <option value="1-2">1–2</option>
-            <option value="3-5">3–5</option>
-            <option value="6-10">6–10</option>
-            <option value="11+">11+</option>
+            <option value="1-2">1–10</option>
+            <option value="3-5">11-30</option>
+            <option value="6-10">31-50</option>
+            <option value="11+">51+</option>
           </select>
         </div>
 
@@ -37,7 +37,10 @@ const PurposeModal = ({ onClose, onSubmit }) => {
             <option value="">Select</option>
             <option value="Study">Study</option>
             <option value="Meeting">Meeting</option>
+            <option value="Club">Club Activity</option>
+            <option value="Presentation">Presentation</option>
             <option value="Project">Team Project</option>
+            <option value="Department Event">Department Event</option>
             <option value="Etc">Others</option>
           </select>
         </div>

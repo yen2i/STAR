@@ -1,68 +1,108 @@
 /* src/styles/PurposeModal.css */
 .purpose-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.purpose-modal {
+  background-color: #fdf7f9; 
+  border-radius: 12px;
+  padding: 24px 32px;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.purpose-modal h2 {
+  font-size: 23px;       /* 폰트 크기 */
+  font-weight: 650;      /* 굵기: 400=보통, 600=굵게 */
+  margin-bottom: 30px;   /* 아래 여백 */
+  font-family: 'Segoe UI', sans-serif;  /* 폰트 지정 (선택사항) */
+}
+
+/* 필드 라벨 + 셀렉트 */
+.modal-field {
+  margin: 16px 0;
+  text-align: left;
+}
+
+.modal-field label {
+  font-size: 15px;
+  font-weight: 500;
+  color: black;
+  margin-bottom: 6px;
+  display: block;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.modal-field select {
+  width: 100%;
+  padding: 8px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  color: #6a6a6a;
+  font-size: 12px;
+}
+
+/* 버튼 영역 */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #1E1759; /* 👉 기존 .modal-box와 동일한 색상 */
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.modal-buttons button.cancel {
+  background-color: #ccc;
+  color: #333;
+}
+
+.modal-buttons button:hover {
+  background-color: #151046;
+}
+
+/* ✅ 모바일 대응 */
+@media (max-width: 600px) {
   .purpose-modal {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 24px 32px;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: center;
+    padding: 20px;
+    max-width: 95%;
   }
-  
-  .modal-field {
-    margin: 16px 0;
-    text-align: left;
+
+  .purpose-modal h2 {
+    font-size: 20px;
   }
-  
-  .modal-field label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-  }
-  
-  .modal-field select {
-    width: 100%;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-  }
-  
+
   .modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 24px;
+    gap: 8px;
   }
-  
+
   .modal-buttons button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #0077cc;
-    color: white;
-    transition: background-color 0.3s ease;
+      min-width: 90px;
+      font-size: 13px;
+      padding: 8px 14px;
   }
-  
-  .modal-buttons button.cancel {
-    background-color: #ccc;
-  }
-  
-  .modal-buttons button:hover {
-    background-color: #005fa3;
-  }
-  
+}

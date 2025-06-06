@@ -197,17 +197,19 @@ const RoomDetailPage = () => {
           <span className="dot dark-green" /> Selected
         </div>
 
-        <div className="grid">
-          <div className="grid-header">
-            <div className="cell time-label"></div>
-            {getWeekDates().map((d, i) => <div className="cell header" key={i}>{d}</div>)}
-          </div>
-          {periods.map((label, r) => (
-            <div className="grid-row" key={r}>
-              <div className="cell time-label">{label}</div>
-              {dayLabels.map((_, c) => renderCell(r, c))}
+        <div className="calendar-wrapper">
+          <div className="grid">
+            <div className="grid-header">
+              <div className="cell time-label"></div>
+              {getWeekDates().map((d, i) => <div className="cell header" key={i}>{d}</div>)}
             </div>
-          ))}
+            {periods.map((label, r) => (
+              <div className="grid-row" key={r}>
+                <div className="cell time-label">{label}</div>
+                {dayLabels.map((_, c) => renderCell(r, c))}
+              </div>
+            ))}
+           </div>
         </div>
 
         <div className="calendar-actions">
