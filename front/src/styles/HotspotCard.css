@@ -1,0 +1,71 @@
+/* styles/HotspotCard.css */
+.hotspot-card {
+    background: white;
+    text-align: center;
+    flex: 1;
+    padding: 15px;
+  }
+  
+  .hotspot-card.first {
+    border-radius: 20px;
+    border: 0.5px solid #656565;
+    background: linear-gradient(180deg, #FDFDFD 0%, #FFFEFA 100%);  
+    box-shadow: 0px 10px 30px 10px rgba(255, 228, 119, 0.25);
+    transform: scale(1.05);
+    z-index: 2;
+    width: 346px;
+    height: 486px;
+  }
+  
+  .hotspot-card.second {
+    border-radius: 20px;
+    border: 0.5px solid #656565;
+    background: #FDFDFD;
+    box-shadow: 0px 10px 30px 10px rgba(255, 123, 119, 0.25);
+    z-index: 1;
+    width: 309px;
+    height: 445px;
+  }
+  
+  .hotspot-card.third {
+    border-radius: 20px;
+    border: 0.5px solid #656565;
+    background: #FDFDFD;
+    box-shadow: 0px 10px 30px 10px rgba(119, 255, 185, 0.25);
+    z-index: 1;
+    width: 309px;
+    height: 445px;
+  }
+  
+  
+  .rank {
+    color: #000;
+    font-family: Jomhuria;
+    font-size: 80px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
+  .building-name {
+    color: #1D0060;
+    text-shadow: 2px 4px 4px rgba(0, 0, 0, 0.25);
+    font-family: Jaro;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
+  img {
+    width: 207px;
+    height: 202px;
+  }
+  button{
+    border-radius: 10px;
+    border: 0.5px solid #656565;
+    background: #1E1759;
+    color: #FDFDFD;
+    width: 186.906px;
+    height: 41px;
+  }
