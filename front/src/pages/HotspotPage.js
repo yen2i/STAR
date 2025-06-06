@@ -9,17 +9,22 @@ import '../styles/HotspotPage.css';
 // 임시 MOCK 데이터
 const MOCK_HOTSPOTS = [
   {
-    id: '32',
-    name: 'Frontier Hall',
-    image: require('../assets/buildings img/32.png'),
-  },
-  {
     id: '2',
+    rank: 2,
     name: 'Dasan Hall',
     image: require('../assets/buildings img/2.png'),
   },
+
+  {
+    id: '32',
+    rank: 1,
+    name: 'Frontier Hall',
+    image: require('../assets/buildings img/32.png'),
+  },
+
   {
     id: '2',
+    rank: 3,
     name: 'Dasan Hall',
     image: require('../assets/buildings img/2.png'),
   },
@@ -56,15 +61,20 @@ const HotspotPage = () => {
         ))}
       </div>
 
+      <div className="category-divider"></div>
+
       <div className="hotspot-display">
-        {MOCK_HOTSPOTS.map((building, index) => (
-          <HotspotCard
-            key={index}
-            rank={index + 1}
-            building={building}
-            onReserveClick={handleReserve}
-          />
-        ))}
+        {[2, 1, 3].map((desiredRank) => {
+          const building = MOCK_HOTSPOTS.find(b => b.rank === desiredRank);
+          return (
+            <HotspotCard
+              key={building.id}
+              rank={building.rank}
+              building={building}
+              onReserveClick={handleReserve}
+            />
+          );
+        })}
       </div>
 
       <Footer />
