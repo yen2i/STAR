@@ -1,17 +1,21 @@
-// src/components/PurposeModal.js
 import React, { useState } from 'react';
 import '../styles/PurposeModal.css';
 
 const PurposeModal = ({ onClose, onSubmit }) => {
-  const [people, setPeople] = useState('');
+  const [peopleCount, setPeople] = useState('');
   const [purpose, setPurpose] = useState('');
 
   const handleSubmit = () => {
-    if (!people || !purpose) {
+    if (!peopleCount || !purpose) {
       alert('Please select both number of people and purpose.');
       return;
     }
-    onSubmit({ people, purpose });
+
+    onSubmit({
+      peopleCount: Number(peopleCount), // 숫자로 백엔드에 전송
+      purpose,
+    });
+
     onClose();
   };
 
@@ -22,12 +26,12 @@ const PurposeModal = ({ onClose, onSubmit }) => {
 
         <div className="modal-field">
           <label>Number of People</label>
-          <select value={people} onChange={(e) => setPeople(e.target.value)}>
+          <select value={peopleCount} onChange={(e) => setPeople(e.target.value)}>
             <option value="">Select</option>
-            <option value="1-2">1–10</option>
-            <option value="3-5">11-30</option>
-            <option value="6-10">31-50</option>
-            <option value="11+">51+</option>
+            <option value="10">1–10</option>
+            <option value="30">11–30</option>
+            <option value="50">31–50</option>
+            <option value="100">51+</option>
           </select>
         </div>
 

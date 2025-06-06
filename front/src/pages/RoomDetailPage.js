@@ -1,6 +1,4 @@
-// 🛠️ RoomDetailPage.js (목적 → 확인 → 성공 순서)
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header';
@@ -17,6 +15,13 @@ const periods = [
 const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const dayKor = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const startTimes = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+
+const numberToRange = {
+  10: '1–10',
+  30: '11–30',
+  50: '31–50',
+  100: '51+',
+};
 
 const RoomDetailPage = () => {
   const { building, roomId } = useParams();
@@ -145,8 +150,18 @@ const RoomDetailPage = () => {
     try {
       await axios.post(
         'http://localhost:5000/api/reservations',
-        { building, room, date, startTime, endTime, ...purposeInfo },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        {
+          building,
+          room,
+          date,
+          startTime,
+          endTime,
+          purpose: purposeInfo.purpose,
+          peopleCount: parseInt(purposeInfo.peopleCount),
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }
       );
       setShowConfirm(false);
       setShowSuccess(true);
@@ -218,7 +233,7 @@ const RoomDetailPage = () => {
                   <p>- {day} / Period {firstRow} - {lastRow} ({timeRange})</p>
                   <hr />
                   <p>
-                    Number of People: <strong>{purposeInfo?.peopleCount || '-'}</strong><br />
+                    Number of People: <strong>{numberToRange[parseInt(purposeInfo?.peopleCount)] || '-'}</strong><br />
                     Purpose: <strong>{purposeInfo?.purpose || '-'}</strong>
                   </p>
                 </>
@@ -226,12 +241,11 @@ const RoomDetailPage = () => {
             })()}
             <p>Are you sure to confirm your reservation?</p>
             <div className="modal-buttons">
-              <button onClick={() => handleReservation()}>Yes!</button>
+              <button onClick={handleReservation}>Yes!</button>
               <button onClick={() => setShowConfirm(false)}>No!</button>
             </div>
           </Modal>
         )}
-
 
         {showSuccess && (
           <Modal
