@@ -130,6 +130,7 @@
   cursor: pointer;
 }
 
+
 /* ✅ 모바일 반응형 */
 @media (max-width: 600px) {
   .room-detail-content {

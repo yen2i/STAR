@@ -1,34 +1,11 @@
-// src/pages/HotspotPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HotspotCard from '../components/HotspotCard';
+import RoomSelectModal from '../components/RoomSelectModal';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/HotspotPage.css';
-
-// 임시 MOCK 데이터
-const MOCK_HOTSPOTS = [
-  {
-    id: '2',
-    rank: 2,
-    name: 'Dasan Hall',
-    image: require('../assets/buildings img/2.png'),
-  },
-
-  {
-    id: '32',
-    rank: 1,
-    name: 'Frontier Hall',
-    image: require('../assets/buildings img/32.png'),
-  },
-
-  {
-    id: '2',
-    rank: 3,
-    name: 'Dasan Hall',
-    image: require('../assets/buildings img/2.png'),
-  },
-];
 
 const CATEGORIES = [
   'Most Visited',
@@ -39,10 +16,90 @@ const CATEGORIES = [
 
 const HotspotPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  const [hotspots, setHotspots] = useState([]);
+  const [modalBuilding, setModalBuilding] = useState(null);
   const navigate = useNavigate();
 
-  const handleReserve = (building) => {
-    navigate(`/reserve/${building.name}`);
+  const fetchData = async (category) => {
+    try {
+      let response;
+      if (category === 'Most Visited') {
+        response = await axios.get('/api/analytics/popular-buildings');
+      } else if (category === 'Auditorium Size / Large Hall') {
+        response = await axios.get('/api/analytics/popular-buildings/by-large-group');
+      } else if (category === 'Study Friendly') {
+        response = await axios.get('/api/analytics/popular-buildings/by-purpose?purpose=스터디');
+      } else if (category === 'Meeting & Presentation / Collab Zones') {
+        response = await axios.get('/api/analytics/popular-buildings/by-purpose?purpose=면접 준비');
+      }
+
+      const data = Array.isArray(response.data) ? response.data : [response.data];
+
+      const buildings = data.map((item, i) => {
+        const id = parseInt(item._id?.match(/\d+/)?.[0] || i); // buildingNo 추출
+        return {
+          id: String(id),
+          name: item._id,
+          rank: i + 1,
+          image: require(`../assets/buildings img/${id}.png`),
+        };
+      });
+
+      setHotspots(buildings);
+    } catch (err) {
+      console.error('🔥 Fallback to mock data due to error:', err);
+      setHotspots([
+        {
+          id: '32',
+          rank: 1,
+          name: 'Frontier Hall',
+          image: require('../assets/buildings img/32.png'),
+        },
+        {
+          id: '2',
+          rank: 2,
+          name: 'Dasan Hall',
+          image: require('../assets/buildings img/2.png'),
+        },
+        {
+          id: '2',
+          rank: 3,
+          name: 'Dasan Hall',
+          image: require('../assets/buildings img/2.png'),
+        },
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(selectedCategory);
+  }, [selectedCategory]);
+
+  const handleReserve = async (building) => {
+    try {
+      const res = await axios.get(`/api/buildings/rooms?buildingNo=${building.id}`);
+      const availableRooms = res.data.rooms.map(room => ({
+        room: room,
+      }));
+
+      setModalBuilding({
+        id: building.id,
+        name: building.name,
+        image: building.image,
+        availableRooms,
+      });
+    } catch (err) {
+      console.error('Failed to fetch rooms:', err);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalBuilding(null);
+  };
+
+  const handleSelectRoom = (room) => {
+    navigate(`/room/${modalBuilding.id}/${room}`);
+    handleCloseModal();
   };
 
   return (
@@ -64,18 +121,26 @@ const HotspotPage = () => {
       <div className="category-divider"></div>
 
       <div className="hotspot-display">
-        {[2, 1, 3].map((desiredRank) => {
-          const building = MOCK_HOTSPOTS.find(b => b.rank === desiredRank);
-          return (
+        {[1, 2, 3].map((desiredRank) => {
+          const building = hotspots.find(b => b.rank === desiredRank);
+          return building ? (
             <HotspotCard
-              key={building.id}
+              key={building.id + desiredRank}
               rank={building.rank}
               building={building}
               onReserveClick={handleReserve}
             />
-          );
+          ) : null;
         })}
       </div>
+
+      {modalBuilding && (
+        <RoomSelectModal
+          building={modalBuilding}
+          onClose={handleCloseModal}
+          onSelectRoom={handleSelectRoom}
+        />
+      )}
 
       <Footer />
     </div>
