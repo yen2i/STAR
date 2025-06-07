@@ -186,7 +186,7 @@ const ReservePage = () => {
 
       <RoomSelectModal
         building={selectedBuilding}
-        onClose={() => setShowModal(false)}
+        onClose={() => setSelectedBuilding(null)}
         onSelectRoom={handleRoomSelect}
       />
 

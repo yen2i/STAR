@@ -30,19 +30,13 @@
   max-height: 70vh;
 }
 
-/* ✅ 닫기 버튼 */
 .modal-close-button {
   position: absolute;
-  width: 34px;      
-  height: 34px;
-  right: 12px;
-  font-size: 22px;
-  font-weight: bold;
-  border-radius: 6px;
-  
-  color: white;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
   cursor: pointer;
-  background: #1E1759;;
+  color: #555;
   z-index: 10;
 }
 
