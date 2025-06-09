@@ -14,7 +14,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 300px;
+  gap: 250px;
   padding: 40px;
   max-width: 1200px;
   margin: 0 auto;
@@ -30,8 +30,8 @@ body {
 }
 
 .logo-image {
-  width: 100%;
-  max-width: 500px;
+  width: 560px;
+  max-width: 560px;
   height: auto;
   display: block;
   animation: float 3s ease-in-out infinite;
@@ -67,8 +67,8 @@ body {
   background: #1E1759;
   box-shadow: 0px 0px 7px 5px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
-  width: 300px;
-  height: 60px;
+  width: 545px;
+  height: 86px;
 
   color: #FFF;
   font-family: Inter;
@@ -88,8 +88,32 @@ body {
   50%  { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
 }
+/* 태블릿 (601px ~ 1024px)*/
+@media (min-width: 601px) and (max-width: 1024px) {
+  .main-content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    gap: 40px;
+  }
 
+  .main-buttons {
+    width: 100%;
+    max-width: 545px;
+    align-items: center;
+    padding: 0;
+    margin-top: 0;
+  }
+
+  .main-buttons button {
+    width: 100%;
+    font-size: 20px;
+    height: 86px;
+  }
+}
 /* 모바일*/
+
 @media (max-width: 600px) {
   .main-content {
     flex-direction: column;

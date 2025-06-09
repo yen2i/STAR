@@ -81,7 +81,7 @@ const HotspotPage = () => {
       const availableRooms = res.data.rooms.map(room => ({
         room: room,
       }));
-
+  
       setModalBuilding({
         id: building.id,
         name: building.name,
@@ -90,17 +90,33 @@ const HotspotPage = () => {
       });
     } catch (err) {
       console.error('Failed to fetch rooms:', err);
+  
+      // ✅ Fallback mock data
+      const mockRooms = [
+        { room: 'Room 101', time: '08:00 - 09:50' },
+        { room: 'Room 202', time: '10:00 - 11:50' },
+      ];
+  
+      setModalBuilding({
+        id: building.id,
+        name: building.name,
+        image: building.image,
+        availableRooms: mockRooms,
+      });
     }
   };
+  
 
   const handleCloseModal = () => {
     setModalBuilding(null);
   };
 
   const handleSelectRoom = (room) => {
-    navigate(`/room/${modalBuilding.id}/${room}`);
+    const roomNumber = room.room.match(/\d+/)?.[0]; // 숫자만 추출 (예: '107')
+    navigate(`/reserve/${modalBuilding.name}/${roomNumber}`);
     handleCloseModal();
   };
+  
 
   return (
     <div className="hotspot-page">
