@@ -84,7 +84,7 @@ const RoomDetailPage = () => {
 
   const fetchAvailability = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/timetable/availability', {
+      const res = await axios.get('http://localhost:8080/api/timetable/availability', {
         params: { building, room, week: formatDate(startOfWeek) }
       });
       applyGridFromAvailability(res.data.availability);
@@ -149,7 +149,7 @@ const RoomDetailPage = () => {
 
     try {
       await axios.post(
-        'http://localhost:5000/api/reservations',
+        'http://localhost:8080/api/reservations',
         {
           building,
           room,

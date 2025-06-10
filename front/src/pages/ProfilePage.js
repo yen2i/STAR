@@ -58,7 +58,7 @@ const ProfilePage = () => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token');
 
-        const res = await axios.get('http://localhost:5000/api/users/me', {
+        const res = await axios.get('http://localhost:8080/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -103,13 +103,13 @@ const ProfilePage = () => {
 
       if (token) {
         if (isAlreadyFavorite) {
-          await axios.delete('http://localhost:5000/api/users/favorites', {
+          await axios.delete('http://localhost:8080/api/users/favorites', {
             headers: { Authorization: `Bearer ${token}` },
             data: { building: buildingName },
           });
           updatedFavorites = user.favorites.filter((n) => n !== buildingName);
         } else {
-          await axios.post('http://localhost:5000/api/users/favorites', { building: buildingName }, {
+          await axios.post('http://localhost:8080/api/users/favorites', { building: buildingName }, {
             headers: { Authorization: `Bearer ${token}` },
           });
           updatedFavorites = [...user.favorites, buildingName];
