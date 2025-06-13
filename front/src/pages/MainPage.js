@@ -17,6 +17,15 @@ const MainPage = () => {
     }
   };
 
+  const handleHotspotClick = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/hotspot');
+    } else {
+      navigate('/login');
+    }
+  };
+
   const handleMapClick = () => {
     window.open('https://en.seoultech.ac.kr/about/cmap', '_blank');
   };
@@ -44,7 +53,7 @@ const MainPage = () => {
         {/* 버튼 묶음 */}
         <div className="main-buttons">
           <button onClick={handleBookClick}>Book a Classroom Now →</button>
-          <button onClick={() => navigate('/hotspot')}> View Hot Spot Buildings →</button>
+          <button onClick={handleHotspotClick}>View Hot Spot Buildings →</button>
           <button onClick={handleMapClick}>View Classroom Map →</button>
         </div>
       </main>

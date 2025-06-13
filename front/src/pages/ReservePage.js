@@ -4,7 +4,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BuildingCard from '../components/BuildingCard';
-import RoomSelectModal from '../components/RoomSelectModal'; // ⭐ 분리된 모달
+import RoomSelectModal from '../components/RoomSelectModal';
 import '../styles/ReservePage.css';
 
 const getBuildingImage = (id) => {
@@ -131,9 +131,9 @@ const ReservePage = () => {
     navigate(`/reserve/${selectedBuilding.name}/${roomNumber}`);
   };
 
-  const filteredBuildings = buildings.filter(b =>
-    b.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredBuildings = buildings
+    .filter(b => b.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(b => b.availableRooms.length > 0); // ✅ 방이 없는 건물 제외
 
   const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.name));
   const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.name));
