@@ -24,13 +24,13 @@ const HotspotPage = () => {
     try {
       let response;
       if (category === 'Most Visited') {
-        response = await axios.get('/api/analytics/popular-buildings');
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings');
       } else if (category === 'Auditorium Size / Large Hall') {
-        response = await axios.get('/api/analytics/popular-buildings/by-large-group');
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-large-group');
       } else if (category === 'Study Friendly') {
-        response = await axios.get('/api/analytics/popular-buildings/by-purpose?purpose=스터디');
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=study');
       } else if (category === 'Meeting & Presentation / Collab Zones') {
-        response = await axios.get('/api/analytics/popular-buildings/by-purpose?purpose=면접 준비');
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=meeting');
       }
 
       const data = Array.isArray(response.data) ? response.data : [response.data];
@@ -77,7 +77,7 @@ const HotspotPage = () => {
 
   const handleReserve = async (building) => {
     try {
-      const res = await axios.get(`/api/buildings/rooms?buildingNo=${building.id}`);
+      const res = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${building.id}`);
       const availableRooms = res.data.rooms.map(room => ({
         room: room,
       }));

@@ -39,7 +39,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
-  /* 🔥 핫스팟 카드 정렬 */
+  /* 핫스팟 카드 정렬 */
   .hotspot-display {
     display: flex;
     justify-content: center;
