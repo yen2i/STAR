@@ -60,9 +60,10 @@
 
 .reservation-building {
   font-size: 28px;
-  font-family: "IBM Plex Mono", monospace;
+  font-family: 'Jaro', sans-serif;
   margin-bottom: 10px;
-  color: #000;
+  color: #000768;
+  text-shadow: 2px 3px 3px rgba(1, 0, 65, 0.199);
 }
 
 .reservation-detail {
@@ -75,7 +76,7 @@
   background-color: #1E1759;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 12px 12px;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
