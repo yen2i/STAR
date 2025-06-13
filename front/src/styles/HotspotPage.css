@@ -1,6 +1,6 @@
 /* src/styles/HotspotPage.css */
 
-/* 🔘 카테고리 필터 버튼 */
+/* 카테고리 필터 버튼 */
 .category-bar {
     display: flex;
     justify-content: center;
@@ -39,7 +39,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
-  /* 🔥 핫스팟 카드 정렬 */
+  /* 핫스팟 카드 정렬 */
   .hotspot-display {
     display: flex;
     justify-content: center;
