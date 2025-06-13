@@ -205,8 +205,20 @@ const RoomDetailPage = () => {
         </div>
 
         <div className="calendar-actions">
-          <button className="reserve-btn" onClick={() => setShowPurposeModal(true)}>Make a Reservation →</button>
+          <button
+            className="reserve-btn"
+            onClick={() => {
+              if (selected.length === 0) {
+                alert('Please select at least one time before making a reservation.');
+                return;
+              }
+              setShowPurposeModal(true);
+            }}
+          >
+            Make a Reservation →
+          </button>
         </div>
+
 
         {showPurposeModal && (
           <PurposeModal
