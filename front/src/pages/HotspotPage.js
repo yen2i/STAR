@@ -1,166 +1,191 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import HotspotCard from '../components/HotspotCard';
-import RoomSelectModal from '../components/RoomSelectModal';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/HotspotPage.css';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import BuildingCard from '../components/BuildingCard';
+import RoomSelectModal from '../components/RoomSelectModal'; // ⭐ 모달 추가
+import profileImg from '../assets/profile.png';
+import '../styles/ProfilePage.css';
 
-const CATEGORIES = [
-  'Most Visited',
-  'Auditorium Size / Large Hall',
-  'Study Friendly',
-  'Meeting & Presentation / Collab Zones',
+const getBuildingImage = (id) => {
+  try {
+    return require(`../assets/buildings img/${id}.png`);
+  } catch {
+    return require(`../assets/buildings img/2.png`);
+  }
+};
+
+const MOCK_BUILDINGS = [
+  {
+    id: '32',
+    name: 'Frontier Hall',
+    image: getBuildingImage('32'),
+    availableRooms: [
+      { room: 'Room 107', time: '8:00 - 10:50' },
+      { room: 'Room 131', time: '11:00 - 12:50' },
+    ],
+  },
+  {
+    id: '2',
+    name: 'Dasan Hall',
+    image: getBuildingImage('2'),
+    availableRooms: [
+      { room: 'Room 201', time: '9:00 - 9:50' },
+      { room: 'Room 105', time: '10:00 - 10:50' },
+    ],
+  },
 ];
 
-const HotspotPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
-  const [hotspots, setHotspots] = useState([]);
-  const [modalBuilding, setModalBuilding] = useState(null);
+// ✅ mock 유저 미리 설정
+const MOCK_USER = {
+  name: '홍길동',
+  studentNumber: '202312345',
+  major: '컴퓨터공학과',
+  favorites: ['Frontier Hall', 'Dasan Hall'],
+};
+
+const ProfilePage = () => {
   const navigate = useNavigate();
-
-  const fetchData = async (category) => {
-    try {
-      let response;
-      if (category === 'Most Visited') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings');
-      } else if (category === 'Auditorium Size / Large Hall') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-large-group');
-      } else if (category === 'Study Friendly') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=study');
-      } else if (category === 'Meeting & Presentation / Collab Zones') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=meeting');
-      }
-
-      const data = Array.isArray(response.data) ? response.data : [response.data];
-
-      const buildings = data.map((item, i) => {
-        const id = parseInt(item._id?.match(/\d+/)?.[0] || i); // buildingNo 추출
-        return {
-          id: String(id),
-          name: item._id,
-          rank: i + 1,
-          image: require(`../assets/buildings img/${id}.png`),
-        };
-      });
-
-      setHotspots(buildings);
-    } catch (err) {
-      console.error('🔥 Fallback to mock data due to error:', err);
-      setHotspots([
-        {
-          id: '32',
-          rank: 1,
-          name: 'Frontier Hall',
-          image: require('../assets/buildings img/32.png'),
-        },
-        {
-          id: '2',
-          rank: 2,
-          name: 'Dasan Hall',
-          image: require('../assets/buildings img/2.png'),
-        },
-        {
-          id: '2',
-          rank: 3,
-          name: 'Dasan Hall',
-          image: require('../assets/buildings img/2.png'),
-        },
-      ]);
-    }
-  };
+  const [user, setUser] = useState(null);
+  const [favoriteBuildings, setFavoriteBuildings] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBuilding, setSelectedBuilding] = useState(null);
 
   useEffect(() => {
-    fetchData(selectedCategory);
-  }, [selectedCategory]);
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token');
 
-  const handleReserve = async (building) => {
+        const res = await axios.get('http://localhost:8080/api/users/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const userData = res.data.user;
+        setUser(userData);
+
+        // ✅ 서버에서 전체 건물 목록 받아오기
+        const buildingsRes = await axios.get('http://localhost:8080/api/buildings');
+        const buildingData = buildingsRes.data.buildings;
+
+        // ✅ building.name과 userData.favorites를 비교해 매칭
+        const matched = buildingData.map(b => ({
+          id: String(b.buildingNo),
+          name: b.buildingName,
+          image: getBuildingImage(b.buildingNo),
+          availableRooms: [], // 마이페이지에서는 사용하지 않음
+        })).filter(b => userData.favorites.includes(b.name));
+
+        setFavoriteBuildings(matched);
+      } catch (err) {
+        console.warn('⚠️ 서버 연결 실패, mock 유저 사용');
+        localStorage.setItem('user', JSON.stringify(MOCK_USER));
+        setUser(MOCK_USER);
+
+        const matched = MOCK_BUILDINGS.filter(b =>
+          MOCK_USER.favorites.includes(b.name)
+        );
+        setFavoriteBuildings(matched);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const openRoomModal = (building) => {
+    setSelectedBuilding(building);
+    setShowModal(true);
+  };
+
+  const handleRoomSelect = (room) => {
+    setShowModal(false);
+    const roomNumber = room.room.match(/\d+/)?.[0];
+    navigate(`/reserve/${selectedBuilding.name}/${roomNumber}`);
+  };
+
+  const toggleFavorite = async (buildingName) => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${building.id}`);
-      const availableRooms = res.data.rooms.map(room => ({
-        room: room,
-      }));
-  
-      setModalBuilding({
-        id: building.id,
-        name: building.name,
-        image: building.image,
-        availableRooms,
-      });
+      const token = localStorage.getItem('token');
+      const isAlreadyFavorite = user?.favorites.includes(buildingName);
+      let updatedFavorites;
+
+      if (token) {
+        if (isAlreadyFavorite) {
+          await axios.delete('http://localhost:8080/api/users/favorites', {
+            headers: { Authorization: `Bearer ${token}` },
+            data: { building: buildingName },
+          });
+          updatedFavorites = user.favorites.filter((n) => n !== buildingName);
+        } else {
+          await axios.post('http://localhost:8080/api/users/favorites', { building: buildingName }, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          updatedFavorites = [...user.favorites, buildingName];
+        }
+      } else {
+        // mock fallback
+        updatedFavorites = isAlreadyFavorite
+          ? user.favorites.filter((n) => n !== buildingName)
+          : [...user.favorites, buildingName];
+      }
+
+      const updatedUser = { ...user, favorites: updatedFavorites };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+
+      const matched = MOCK_BUILDINGS.filter(b =>
+        updatedFavorites.includes(b.name)
+      );
+      setFavoriteBuildings(matched);
     } catch (err) {
-      console.error('Failed to fetch rooms:', err);
-  
-      // ✅ Fallback mock data
-      const mockRooms = [
-        { room: 'Room 101', time: '08:00 - 09:50' },
-        { room: 'Room 202', time: '10:00 - 11:50' },
-      ];
-  
-      setModalBuilding({
-        id: building.id,
-        name: building.name,
-        image: building.image,
-        availableRooms: mockRooms,
-      });
+      alert('즐겨찾기 변경 실패!');
     }
   };
-  
 
-  const handleCloseModal = () => {
-    setModalBuilding(null);
-  };
-
-  const handleSelectRoom = (room) => {
-    const roomNumber = room.room.match(/\d+/)?.[0]; // 숫자만 추출 (예: '107')
-    navigate(`/reserve/${modalBuilding.name}/${roomNumber}`);
-    handleCloseModal();
-  };
-  
+  if (!user) return <div>Loading...</div>;
 
   return (
-    <div className="hotspot-page">
+    <div className="profile-page">
       <Header />
+      <main className="profile-content">
+        <h2>My Information</h2>
+        <div className="profile-box">
+          <img src={profileImg} alt="profile" />
+          <div className="profile-info">
+            <div><strong>{user.name}</strong></div>
+            <div>{user.studentNumber}</div>
+            <div>{user.major}</div>
+          </div>
+        </div>
 
-      <div className="category-bar">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            className={cat === selectedCategory ? 'active' : ''}
-            onClick={() => setSelectedCategory(cat)}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+        <h2>My Favorite Classrooms</h2>
+        <div className="building-list">
+          {favoriteBuildings.length > 0 ? (
+            favoriteBuildings.map((building) => (
+              <BuildingCard
+                key={building.id}
+                building={building}
+                isFavorite={user.favorites.includes(building.name)}
+                onReserveClick={openRoomModal}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))
+          ) : (
+            <p>You have no favorite classrooms yet.</p>
+          )}
+        </div>
+      </main>
 
-      <div className="category-divider"></div>
-
-      <div className="hotspot-display">
-        {[1, 2, 3].map((desiredRank) => {
-          const building = hotspots.find(b => b.rank === desiredRank);
-          return building ? (
-            <HotspotCard
-              key={building.id + desiredRank}
-              rank={building.rank}
-              building={building}
-              onReserveClick={handleReserve}
-            />
-          ) : null;
-        })}
-      </div>
-
-      {modalBuilding && (
-        <RoomSelectModal
-          building={modalBuilding}
-          onClose={handleCloseModal}
-          onSelectRoom={handleSelectRoom}
-        />
-      )}
+      <RoomSelectModal
+        building={selectedBuilding}
+        onClose={() => setSelectedBuilding(null)}
+        onSelectRoom={handleRoomSelect}
+      />
 
       <Footer />
     </div>
   );
 };
 
-export default HotspotPage;
+export default ProfilePage;
