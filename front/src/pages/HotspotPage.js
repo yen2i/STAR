@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import HotspotCard from '../components/HotspotCard';
@@ -10,7 +8,6 @@ import axios from 'axios';
 import '../styles/HotspotPage.css';
 
 const CATEGORIES = [
-  'Most Visited',
   'Auditorium Size / Large Hall',
   'Study Friendly',
   'Meeting & Presentation / Collab Zones',
@@ -22,32 +19,43 @@ const HotspotPage = () => {
   const [modalBuilding, setModalBuilding] = useState(null);
   const navigate = useNavigate();
 
+  const getBuildingImage = (id) => {
+    try {
+      return require(`../assets/buildings img/${id}.png`);
+    } catch {
+      return require(`../assets/buildings img/2.png`);
+    }
+  };
+
   const fetchData = async (category) => {
     try {
       let response;
-      if (category === 'Most Visited') {
-        response = await axios.get('/api/analytics/popular-buildings');
-      } else if (category === 'Auditorium Size / Large Hall') {
-        response = await axios.get('/api/analytics/popular-buildings/by-large-group');
+      if (category === 'Auditorium Size / Large Hall') {
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-large-group');
       } else if (category === 'Study Friendly') {
-        response = await axios.get('/api/analytics/popular-buildings/by-purpose?purpose=스터디');
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=Study');
       } else if (category === 'Meeting & Presentation / Collab Zones') {
-        response = await axios.get('/api/analytics/popular-buildings/by-purpose?purpose=면접 준비');
+        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=Meeting');
       }
 
-      const data = Array.isArray(response.data) ? response.data : [response.data];
+      const hotspotData = Array.isArray(response.data) ? response.data : [response.data];
 
-      const buildings = data.map((item, i) => {
-        const id = parseInt(item._id?.match(/\d+/)?.[0] || i); // buildingNo 추출
+      const allBuildingsRes = await axios.get('http://localhost:8080/api/buildings');
+      const allBuildings = allBuildingsRes.data.buildings;
+
+      const matched = hotspotData.map((item, i) => {
+        const match = allBuildings.find(b => b.buildingName === item._id);
+        const buildingNo = match?.buildingNo || '2';
+
         return {
-          id: String(id),
+          id: String(buildingNo),
           name: item._id,
           rank: i + 1,
-          image: require(`../assets/buildings img/${id}.png`),
+          image: getBuildingImage(buildingNo),
         };
       });
 
-      setHotspots(buildings);
+      setHotspots(matched);
     } catch (err) {
       console.error('🔥 Fallback to mock data due to error:', err);
       setHotspots([
@@ -55,19 +63,19 @@ const HotspotPage = () => {
           id: '32',
           rank: 1,
           name: 'Frontier Hall',
-          image: require('../assets/buildings img/32.png'),
+          image: getBuildingImage('32'),
         },
         {
           id: '2',
           rank: 2,
           name: 'Dasan Hall',
-          image: require('../assets/buildings img/2.png'),
+          image: getBuildingImage('2'),
         },
         {
           id: '2',
           rank: 3,
           name: 'Dasan Hall',
-          image: require('../assets/buildings img/2.png'),
+          image: getBuildingImage('2'),
         },
       ]);
     }
@@ -79,11 +87,12 @@ const HotspotPage = () => {
 
   const handleReserve = async (building) => {
     try {
-      const res = await axios.get(`/api/buildings/rooms?buildingNo=${building.id}`);
+      const res = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${building.id}`);
       const availableRooms = res.data.rooms.map(room => ({
-        room: room,
+        room: `Room ${room}`,
+        time: '8:00 - 17:50',
       }));
-  
+
       setModalBuilding({
         id: building.id,
         name: building.name,
@@ -91,53 +100,74 @@ const HotspotPage = () => {
         availableRooms,
       });
     } catch (err) {
-      alert('즐겨찾기 변경 실패!');
+      console.error('Failed to fetch rooms:', err);
+      const mockRooms = [
+        { room: 'Room 101', time: '08:00 - 09:50' },
+        { room: 'Room 202', time: '10:00 - 11:50' },
+      ];
+
+      setModalBuilding({
+        id: building.id,
+        name: building.name,
+        image: building.image,
+        availableRooms: mockRooms,
+      });
     }
   };
 
-  if (!user) return <div>Loading...</div>;
+  const handleCloseModal = () => {
+    setModalBuilding(null);
+  };
+
+  const handleSelectRoom = (room) => {
+    const roomNumber = room.room.match(/\d+/)?.[0];
+    navigate(`/reserve/${modalBuilding.name}/${roomNumber}`);
+    handleCloseModal();
+  };
 
   return (
-    <div className="profile-page">
+    <div className="hotspot-page">
       <Header />
-      <main className="profile-content">
-        <h2>My Information</h2>
-        <div className="profile-box">
-          <img src={profileImg} alt="profile" />
-          <div className="profile-info">
-            <div><strong>{user.name}</strong></div>
-            <div>{user.studentNumber}</div>
-            <div>{user.major}</div>
-          </div>
-        </div>
 
-        <h2>My Favorite Classrooms</h2>
-        <div className="building-list">
-          {favoriteBuildings.length > 0 ? (
-            favoriteBuildings.map((building) => (
-              <BuildingCard
-                key={building.id}
-                building={building}
-                isFavorite={user.favorites.includes(building.name)}
-                onReserveClick={openRoomModal}
-                onToggleFavorite={toggleFavorite}
-              />
-            ))
-          ) : (
-            <p>You have no favorite classrooms yet.</p>
-          )}
-        </div>
-      </main>
+      <div className="category-bar">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            className={cat === selectedCategory ? 'active' : ''}
+            onClick={() => setSelectedCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
-      <RoomSelectModal
-        building={selectedBuilding}
-        onClose={() => setSelectedBuilding(null)}
-        onSelectRoom={handleRoomSelect}
-      />
+      <div className="category-divider"></div>
+
+      <div className="hotspot-display">
+        {[1, 2, 3].map((desiredRank) => {
+          const building = hotspots.find(b => b.rank === desiredRank);
+          return building ? (
+            <HotspotCard
+              key={building.id + desiredRank}
+              rank={building.rank}
+              building={building}
+              onReserveClick={handleReserve}
+            />
+          ) : null;
+        })}
+      </div>
+
+      {modalBuilding && (
+        <RoomSelectModal
+          building={modalBuilding}
+          onClose={handleCloseModal}
+          onSelectRoom={handleSelectRoom}
+        />
+      )}
 
       <Footer />
     </div>
   );
 };
 
-export default ProfilePage;
+export default HotspotPage;
