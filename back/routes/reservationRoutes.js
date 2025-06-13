@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/authMiddleware');
+
+const authMiddleware = process.env.NODE_ENV === 'test'
+  ? require('../middleware/fakeAuthMiddleware')
+  : require('../middleware/authMiddleware');
+  
 const Reservation = require('../models/Reservation');
 const ReservationMeta = require('../models/ReservationMeta');
 
