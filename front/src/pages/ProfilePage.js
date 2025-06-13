@@ -65,9 +65,18 @@ const ProfilePage = () => {
         const userData = res.data.user;
         setUser(userData);
 
-        const matched = MOCK_BUILDINGS.filter(b =>
-          userData.favorites.includes(b.name)
-        );
+        // ✅ 서버에서 전체 건물 목록 받아오기
+        const buildingsRes = await axios.get('http://localhost:8080/api/buildings');
+        const buildingData = buildingsRes.data.buildings;
+
+        // ✅ building.name과 userData.favorites를 비교해 매칭
+        const matched = buildingData.map(b => ({
+          id: String(b.buildingNo),
+          name: b.buildingName,
+          image: getBuildingImage(b.buildingNo),
+          availableRooms: [], // 마이페이지에서는 사용하지 않음
+        })).filter(b => userData.favorites.includes(b.name));
+
         setFavoriteBuildings(matched);
       } catch (err) {
         console.warn('⚠️ 서버 연결 실패, mock 유저 사용');
@@ -163,7 +172,7 @@ const ProfilePage = () => {
               />
             ))
           ) : (
-            <p>즐겨찾기한 강의실이 없습니다.</p>
+            <p>You have no favorite classrooms yet.</p>
           )}
         </div>
       </main>
