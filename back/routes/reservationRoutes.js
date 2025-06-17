@@ -66,6 +66,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const newMeta = new ReservationMeta({
       reservation: newReservation._id,
+      building,
       purpose,
       peopleCount
     });
