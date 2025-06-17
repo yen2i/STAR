@@ -41,7 +41,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/users/login', (req, res) => {
-  console.log('📥 req.body:', req.body); // undefined인지, 비어 있는지 확인
+  console.log('🌐 headers:', req.headers);
+  console.log('📦 body:', req.body);
 });
 
 module.exports = app;
