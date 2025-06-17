@@ -8,8 +8,7 @@
 
 # ⭐ STAR ⭐
 SeoulTech Avaliable Room
-![image](https://github.com/user-attachments/assets/0e618195-a67f-406c-9253-1e73c87f8623) ![image](https://github.com/user-attachments/assets/d325f6a8-56ee-4c15-9705-791c0739e6f0) ![image](https://github.com/user-attachments/assets/6fc2580f-db78-40af-a911-a6afcb821ab6)
-
+<img alt="Reservation Screen 1" src="[https://your-image-url](https://github.com/user-attachments/assets/0e618195-a67f-406c-9253-1e73c87f8623)" width="260"> <img alt="Reservation Screen 2" src="[https://your-image-url](https://github.com/user-attachments/assets/d325f6a8-56ee-4c15-9705-791c0739e6f0)" width="260"> <img alt="Reservation Screen 3" src="[https://your-image-url](https://github.com/user-attachments/assets/6fc2580f-db78-40af-a911-a6afcb821ab6)" width="260">
 
 <br>
 
