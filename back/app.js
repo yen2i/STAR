@@ -41,9 +41,5 @@ app.get('/', (req, res) => {
   res.send('STAR backend server is running!');
 });
 
-app.post('/api/users/login', (req, res) => {
-  console.log('🌐 headers:', req.headers);
-  console.log('📦 body:', req.body);
-});
 
 module.exports = app;
