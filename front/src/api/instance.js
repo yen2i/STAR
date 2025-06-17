@@ -1,6 +1,7 @@
-import api from '../api/instance';
+// front/src/api/instance.js
+import axios from 'axios';
 
-const instance = api.create({
+const instance = axios.create({
   baseURL: `${process.env.REACT_APP_API_URL}/api`,
   withCredentials: true,
 });
