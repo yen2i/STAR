@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/instance';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
@@ -24,7 +24,7 @@ const MyReservationPage = () => {
   // 🧭 건물 리스트 받아오기
   const fetchBuildings = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/buildings');
+      const res = await api.get('/buildings');
       setBuildings(res.data.buildings || []);
     } catch (err) {
       console.warn('⚠️ 건물 정보 fetch 실패, fallback mock 사용');
@@ -39,7 +39,7 @@ const MyReservationPage = () => {
   const fetchReservations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:8080/api/reservations/my', {
+      const res = await api.get('/reservations/my', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReservations(res.data);
@@ -85,7 +85,7 @@ const MyReservationPage = () => {
   const confirmCancel = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/reservations/${selectedReservation._id}`, {
+      await api.delete(`/reservations/${selectedReservation._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReservations(reservations.filter(r => r._id !== selectedReservation._id));
