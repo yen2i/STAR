@@ -66,7 +66,7 @@ const ProfilePage = () => {
         setUser(userData);
 
         // 서버에서 전체 건물 목록 받아오기
-        const buildingsRes = await axios.get('http://localhost:8080/api/buildings');
+        const buildingsRes = await api.get('/api/buildings');
         const buildingData = buildingsRes.data.buildings;
 
         // building.name과 userData.favorites 비교 후 매칭
