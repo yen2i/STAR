@@ -1,7 +1,5 @@
 <p align="center">
   <img src="front\src\assets\starlogo.png" alt="Logo" width="400">
-  
-  [<a>https://star-client-brown.vercel.app/</a>](https://star-client-brown.vercel.app/)
 </p>
 
 <br>
@@ -10,6 +8,8 @@
 
 # ⭐ STAR ⭐
 SeoulTech Avaliable Room
+
+<https://star-client-brown.vercel.app/>
 
 <img alt="Reservation Screen 1" src="https://github.com/user-attachments/assets/0e618195-a67f-406c-9253-1e73c87f8623" width="250"> <img alt="Reservation Screen 2" src="https://github.com/user-attachments/assets/d325f6a8-56ee-4c15-9705-791c0739e6f0" width="250"> <img alt="Reservation Screen 3" src="https://github.com/user-attachments/assets/6fc2580f-db78-40af-a911-a6afcb821ab6" width="250">
 
