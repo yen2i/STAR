@@ -8,7 +8,7 @@ const authMiddleware = process.env.NODE_ENV === 'test'
 const Reservation = require('../models/Reservation');
 const ReservationMeta = require('../models/ReservationMeta');
 
-const moment = require('moment'); // ⬅️ 날짜 계산용
+const moment = require('moment'); // 날짜 계산용
 
 // 시간 ➝ 교시 매핑 (예: 08:00 → Period 0)
 const getPeriodsFromRange = (startTime, endTime) => {
