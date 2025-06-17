@@ -7,7 +7,7 @@ import ReservePage from './pages/ReservePage';
 import RoomDetailPage from './pages/RoomDetailPage';
 import MyReservationPage from './pages/MyReservationPage';
 import ProfilePage from './pages/ProfilePage';
-import HotspotPage from './pages/HotspotPage'; // ⭐ 추가
+import HotspotPage from './pages/HotspotPage'; 
 
 const App = () => {
   return (
