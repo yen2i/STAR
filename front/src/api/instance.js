@@ -1,15 +1,9 @@
-// src/api/instance.js
+// front/src/api/instance.js
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://your-server.com/api',
+const instance = axios.create({
+  baseURL: `${process.env.REACT_APP_API_URL}/api`,
   withCredentials: true,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-export default api;
+export default instance;
