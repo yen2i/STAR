@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/ReservePage.css'; // ReservePage와 동일한 스타일 사용
+import '../styles/ReservePage.css'; 
 import FavoriteButton from './FavoriteButton';
 
 const BuildingCard = ({

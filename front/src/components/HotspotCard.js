@@ -1,11 +1,9 @@
-// src/components/HotspotCard.js
 import React from 'react';
 import '../styles/HotspotCard.css';
 
 const HotspotCard = ({ rank, building, onReserveClick }) => {
   const rankLabel = ['1st', '2nd', '3rd'][rank - 1];
 
-  // 등수에 따라 클래스 이름 분기
   const rankClass =
     rank === 1 ? 'first' :
     rank === 2 ? 'second' :
