@@ -115,6 +115,8 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       }
   
       await Reservation.findByIdAndDelete(req.params.id);
+
+      await ReservationMeta.deleteOne({ reservation: req.params.id });
   
       res.status(200).json({ message: 'Reservation cancelled successfully!' });
     } catch (err) {
