@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const app = express();
+
 app.use(express.json());
 
 
@@ -15,7 +17,6 @@ const buildingRoutes = require('./routes/buildingRoutes');
 
 const analyticsRoutes = require('./routes/analyticsRoutes');
 
-const app = express();
 
 
 // Middleware
