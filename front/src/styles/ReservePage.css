@@ -2,26 +2,29 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  max-width: 900px;
+  max-width: 890px;
   margin: 0 auto;
-  padding: 32px 16px;
+  padding: 32px;
 }
 
 .search-bar {
-  padding: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 18px;
-  width: 100%;
+  max-width: 800px;
+
 }
 
 .search-bar input {
-  width: 80%;        
-  padding: 12px 16px;  
+  width: 100%;        
+  padding: 14px ;  
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box; 
+}
+.building-list{
+  width: 80%;
 }
 
 .building-card {
@@ -149,4 +152,5 @@
     margin-left: 8px;
     margin-top: 10px;
   }
+  
 }
