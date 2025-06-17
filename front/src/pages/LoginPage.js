@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import api from '../api/instance';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/LoginPage.css';
 import signpassward from '../assets/signpass.png';
 import signstudentnumber from '../assets/signprofile.png';
+import axios from 'axios'; // api 인스턴스 대신 axios 직접 사용
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -17,12 +17,23 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await api.post('/users/login', form);
+      const res = await axios.post(
+        'https://star-isih.onrender.com/api/users/login', // 절대 경로로 테스트
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true, // 필요 시 쿠키 전달
+        }
+      );
+
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/'); // 메인 페이지로 이동
+      navigate('/');
     } catch (err) {
       console.warn('⚠️ 백엔드 로그인 실패 - mock 처리로 우회');
+      console.error(err);
 
       const mockUser = {
         name: '테스트유저',
@@ -39,8 +50,8 @@ const LoginPage = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 새로고침 방지
-    handleLogin();      // 로그인 실행
+    e.preventDefault();
+    handleLogin();
   };
 
   return (
@@ -49,14 +60,11 @@ const LoginPage = () => {
       <main className="login-content">
         <div className="login-title-wrapper">
           <h1 className="login-title">
-            <span className="r">S</span>eoul{' '}
-            <span className="b">T</span>ech{' '}
-            <span className="g">A</span>vailable{' '}
-            <span className="g">R</span>oom
+            <span className="r">S</span>eoul <span className="b">T</span>ech{' '}
+            <span className="g">A</span>vailable <span className="g">R</span>oom
           </h1>
         </div>
 
-        {/*form으로 감싸고 onSubmit 적용 */}
         <form className="login-box" onSubmit={handleSubmit}>
           <h2 className="login-label">Log in</h2>
 
@@ -85,8 +93,10 @@ const LoginPage = () => {
           </div>
 
           <div className="login-buttons">
-            <button type="submit">Log in</button> {/* 기본 로그인 */}
-            <button type="button" onClick={() => navigate('/signup')}>Sign in</button>
+            <button type="submit">Log in</button>
+            <button type="button" onClick={() => navigate('/signup')}>
+              Sign in
+            </button>
           </div>
         </form>
       </main>
