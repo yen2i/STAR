@@ -58,10 +58,10 @@ router.get('/popular-buildings/by-large-group', async (req, res) => {
           }
         },
         { $sort: { count: -1 } },
-        { $limit: 1 }
+        { $limit: 3 }
       ]);
   
-      res.json(result[0] || { message: 'No data' });
+      res.json(result || { message: 'No data' });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Server error' });
