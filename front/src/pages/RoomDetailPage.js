@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'; 
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/instance';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Modal from '../components/Modal';
@@ -84,7 +84,7 @@ const RoomDetailPage = () => {
 
   const fetchAvailability = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/timetable/availability', {
+      const res = await api.get('/timetable/availability', {
         params: { building, room, week: formatDate(startOfWeek) }
       });
       applyGridFromAvailability(res.data.availability);
@@ -148,8 +148,8 @@ const RoomDetailPage = () => {
     const endTime = startTimes[r + selected.length] || '18:00';
 
     try {
-      await axios.post(
-        'http://localhost:8080/api/reservations',
+      await api.post(
+        '/reservations',
         {
           building,
           room,
@@ -168,7 +168,7 @@ const RoomDetailPage = () => {
     } catch (err) {
       setShowConfirm(false);
       alert(err.response?.status === 409
-        ? 'Some of the selected periods have already been reserved'
+        ? 'Some of the selected periods have already been reserved or were booked by you today—cannot reserve again. '
         : 'Reservation failed. Try again.');
     }
   };
