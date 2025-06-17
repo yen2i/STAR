@@ -6,17 +6,14 @@
 
 ---
 
+# ⭐ STAR ⭐
+SeoulTech Avaliable Room
+
 <br>
 
-# ⭐ STAR ⭐
-## SeoulTech Avaliable Room
 STAR is a classroom reservation system for Seoul Tech students and faculty!
 
-<br>
-
 ---
-
-<br>
 
 ## 📖 Table of Contents
 - [Tech Stack](#tech-stack)
@@ -26,15 +23,9 @@ STAR is a classroom reservation system for Seoul Tech students and faculty!
 - [License](#license)
 - [Contact](#contact)
 
-<br>
-
 ---
 
-<br>
-
 ## 🔧 Tech Stack
-
-<br>
 
 #### FRONTEND STACK
 
@@ -43,56 +34,37 @@ STAR is a classroom reservation system for Seoul Tech students and faculty!
 <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
 <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> 
 
-<br>
-
 #### BACKEND STACK
 <img src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">
 <img src="https://img.shields.io/badge/mongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">
 <img src="https://img.shields.io/badge/express-000000?style=for-the-badge&logo=express&logoColor=white">
 
-<br>
-
 #### COOPERATION STACK
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 
-<br>
-
 ---
-
-<br>
 
 ## 🎯 Who Is This For
 This application is for:
 - Any student and faculty at Seoul Tech who wants to book a class room conveniently!
 - Those who had trouble booking a classroom through the department office!
 
-<br>
-
 ---
-
-<br>
 
 ## 🔍 About
 STAR is a classroom reservation application based on Seoul Tech's lecture schedule.
 It is an application designed to improve Seoul Tech's complex classroom reservation system.
 STAR provides real-time classroom information verification and reservation functions.
 
-<br>
-
 ---
-
-<br>
 
 ## 🚀 Features
 - Sign-up and Log-in: Only Seoul Tech students and faculty members can make reservations for classrooms.
 - Reservation/Cancellation of Classrooms: You can reserve and cancel available classrooms based on the lecture schedule.
 - Building Rankings: You can get recommendations from people of the same purpose (ex. Most popular building for study purposes: Frontier Hall)
 
-<br>
-
 ---
 
-<br>
 
 ## 📜 License
 This project is licensed under the MIT License. 
@@ -103,11 +75,8 @@ For more details, check the [LICENSE](./LICENSE) file.
 - License Type: The MIT License allows all uses, including commercial use.
 - Corporate Support: This project is not supported or owned by any specific company.
 
-<br>
 
 ---
-
-<br>
 
 ## 📬 Contact
 If you have any questions or suggestions, please contact us at:
