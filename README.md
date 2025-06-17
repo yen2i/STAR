@@ -1,6 +1,7 @@
 <p align="center">
   <img src="front\src\assets\starlogo.png" alt="Logo" width="400">
-  <a>https://star-client-brown.vercel.app/</a>
+  
+  [<a>https://star-client-brown.vercel.app/</a>](https://star-client-brown.vercel.app/)
 </p>
 
 <br>
