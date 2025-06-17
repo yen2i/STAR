@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import '../styles/MyReservationPage.css';
 
-// ✅ 이미지 경로 매핑
+// 이미지 경로 매핑
 const getBuildingImage = (number) => {
   try {
     return require(`../assets/buildings img/${number}.png`);
@@ -21,7 +21,7 @@ const MyReservationPage = () => {
   const [modalStep, setModalStep] = useState('confirm');
   const [selectedReservation, setSelectedReservation] = useState(null);
 
-  // 🧭 건물 리스트 받아오기
+  // 건물 리스트 받아오기
   const fetchBuildings = async () => {
     try {
       const res = await api.get('/buildings');
@@ -35,7 +35,7 @@ const MyReservationPage = () => {
     }
   };
 
-  // 🗓️ 예약 정보 불러오기
+  // 예약 정보 불러오기
   const fetchReservations = async () => {
     try {
       const token = localStorage.getItem('token');

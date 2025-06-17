@@ -133,7 +133,7 @@ const ReservePage = () => {
 
   const filteredBuildings = buildings
     .filter(b => b.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter(b => b.availableRooms.length > 0); // ✅ 방이 없는 건물 제외
+    .filter(b => b.availableRooms.length > 0); // 방 없는 건물 제외
 
   const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.name));
   const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.name));
