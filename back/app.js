@@ -28,7 +28,7 @@ const app = express();
 //   credentials: true
 // }));
 app.use(cors({
-  origin: ['https://st-available-room.netlify.app'], // ✅ 프론트 배포 URL 정확히 명시
+  origin: ['http://localhost:3000','https://st-available-room.netlify.app'], // ✅ 프론트 배포 URL 정확히 명시
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // ✅ 쿠키/헤더 인증 정보 허용
