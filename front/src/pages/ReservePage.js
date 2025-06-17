@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/instance';
+import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BuildingCard from '../components/BuildingCard';
@@ -54,8 +54,8 @@ const ReservePage = () => {
       try {
         const token = localStorage.getItem('token');
         const [buildingsRes, userRes] = await Promise.all([
-          api.get('/buildings'),
-          api.get('/users/me', {
+          axios.get('http://localhost:8080/api/buildings'),
+          axios.get('http://localhost:8080/api/users/me', {
             headers: { Authorization: `Bearer ${token}` }
           }),
         ]);
@@ -65,7 +65,7 @@ const ReservePage = () => {
 
         const buildingList = await Promise.all(
           buildingData.map(async (b) => {
-            const roomRes = await api.get(`/buildings/rooms?buildingNo=${b.buildingNo}`);
+            const roomRes = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${b.buildingNo}`);
             const availableRooms = roomRes.data.rooms || [];
             return {
               id: String(b.buildingNo),
@@ -99,7 +99,7 @@ const ReservePage = () => {
 
     try {
       if (isAlreadyFavorite) {
-        await api.delete('/users/favorites', {
+        await axios.delete('http://localhost:8080/api/users/favorites', {
           headers: { Authorization: `Bearer ${token}` },
           data: { building: buildingName },
         });
@@ -107,7 +107,7 @@ const ReservePage = () => {
         setFavoriteIds(updated);
         localStorage.setItem('favorites', JSON.stringify(updated));
       } else {
-        await api.post('/users/favorites', { building: buildingName }, {
+        await axios.post('http://localhost:8080/api/users/favorites', { building: buildingName }, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const updated = [...favoriteIds, buildingName];
@@ -133,7 +133,7 @@ const ReservePage = () => {
 
   const filteredBuildings = buildings
     .filter(b => b.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter(b => b.availableRooms.length > 0); // 방 없는 건물 제외
+    .filter(b => b.availableRooms.length > 0); // ✅ 방이 없는 건물 제외
 
   const favoriteBuildings = filteredBuildings.filter(b => favoriteIds.includes(b.name));
   const nonFavoriteBuildings = filteredBuildings.filter(b => !favoriteIds.includes(b.name));

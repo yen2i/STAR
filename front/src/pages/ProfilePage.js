@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/instance';
+import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BuildingCard from '../components/BuildingCard';
@@ -37,7 +37,7 @@ const MOCK_BUILDINGS = [
   },
 ];
 
-// mock 유저 미리 설정
+// ✅ mock 유저 미리 설정
 const MOCK_USER = {
   name: '홍길동',
   studentNumber: '202312345',
@@ -58,23 +58,23 @@ const ProfilePage = () => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token');
 
-        const res = await api.get('/users/me', {
+        const res = await axios.get('http://localhost:8080/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
 
         const userData = res.data.user;
         setUser(userData);
 
-        // 서버에서 전체 건물 목록 받아오기
-        const buildingsRes = await api.get('/api/buildings');
+        // ✅ 서버에서 전체 건물 목록 받아오기
+        const buildingsRes = await axios.get('http://localhost:8080/api/buildings');
         const buildingData = buildingsRes.data.buildings;
 
-        // building.name과 userData.favorites 비교 후 매칭
+        // ✅ building.name과 userData.favorites를 비교해 매칭
         const matched = await Promise.all(
           buildingData
             .filter(b => userData.favorites.includes(b.buildingName))
             .map(async (b) => {
-              const roomRes = await api.get(`/buildings/rooms?buildingNo=${b.buildingNo}`);
+              const roomRes = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${b.buildingNo}`);
               const availableRooms = roomRes.data.rooms || [];
         
               return {
@@ -123,13 +123,13 @@ const ProfilePage = () => {
 
       if (token) {
         if (isAlreadyFavorite) {
-          await api.delete('/users/favorites', {
+          await axios.delete('http://localhost:8080/api/users/favorites', {
             headers: { Authorization: `Bearer ${token}` },
             data: { building: buildingName },
           });
           updatedFavorites = user.favorites.filter((n) => n !== buildingName);
         } else {
-          await api.post('/users/favorites', { building: buildingName }, {
+          await axios.post('http://localhost:8080/api/users/favorites', { building: buildingName }, {
             headers: { Authorization: `Bearer ${token}` },
           });
           updatedFavorites = [...user.favorites, buildingName];
