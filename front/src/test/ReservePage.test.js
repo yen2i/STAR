@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ReservePage from '../pages/ReservePage';
 import { BrowserRouter } from 'react-router-dom';
@@ -10,7 +11,7 @@ beforeEach(() => {
   localStorage.setItem('favorites', JSON.stringify(['Dasan Hall']));
 });
 
-test('즐겨찾기 건물이 상단에 표시되는지 확인', async () => {
+test('Make sure your favorite building is displayed at the top', async () => {
   render(
     <BrowserRouter>
       <ReservePage />

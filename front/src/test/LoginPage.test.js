@@ -1,8 +1,9 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import LoginPage from '../pages/LoginPage';
 import { BrowserRouter } from 'react-router-dom';
 
-test('로그인 입력값이 반영됨', () => {
+test('Login input reflected', () => {
   render(
     <BrowserRouter>
       <LoginPage />
