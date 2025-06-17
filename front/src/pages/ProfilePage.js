@@ -4,7 +4,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BuildingCard from '../components/BuildingCard';
-import RoomSelectModal from '../components/RoomSelectModal'; // ⭐ 모달 추가
+import RoomSelectModal from '../components/RoomSelectModal'; // 모달 추가
 import profileImg from '../assets/profile.png';
 import '../styles/ProfilePage.css';
 
@@ -70,13 +70,24 @@ const ProfilePage = () => {
         const buildingData = buildingsRes.data.buildings;
 
         // ✅ building.name과 userData.favorites를 비교해 매칭
-        const matched = buildingData.map(b => ({
-          id: String(b.buildingNo),
-          name: b.buildingName,
-          image: getBuildingImage(b.buildingNo),
-          availableRooms: [], // 마이페이지에서는 사용하지 않음
-        })).filter(b => userData.favorites.includes(b.name));
-
+        const matched = await Promise.all(
+          buildingData
+            .filter(b => userData.favorites.includes(b.buildingName))
+            .map(async (b) => {
+              const roomRes = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${b.buildingNo}`);
+              const availableRooms = roomRes.data.rooms || [];
+        
+              return {
+                id: String(b.buildingNo),
+                name: b.buildingName,
+                image: getBuildingImage(b.buildingNo),
+                availableRooms: availableRooms.map(room => ({
+                  room: `Room ${room}`,
+                  time: '8:00 - 17:50',
+                }))
+              };
+            })
+        );
         setFavoriteBuildings(matched);
       } catch (err) {
         console.warn('⚠️ 서버 연결 실패, mock 유저 사용');
@@ -139,7 +150,7 @@ const ProfilePage = () => {
       );
       setFavoriteBuildings(matched);
     } catch (err) {
-      alert('즐겨찾기 변경 실패!');
+      alert('Unable to update your favorites. Please try again.');
     }
   };
 
