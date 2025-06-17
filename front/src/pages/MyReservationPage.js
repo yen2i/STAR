@@ -16,7 +16,7 @@ const getBuildingImage = (number) => {
 
 const MyReservationPage = () => {
   const [reservations, setReservations] = useState([]);
-  const [buildings, setBuildings] = useState([]); // 🧭 건물 번호 <-> 이름 매핑용
+  const [buildings, setBuildings] = useState([]); // 건물 번호 <-> 이름 매핑용
   const [showModal, setShowModal] = useState(false);
   const [modalStep, setModalStep] = useState('confirm');
   const [selectedReservation, setSelectedReservation] = useState(null);
