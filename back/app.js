@@ -2,6 +2,11 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const app = express();
+
+app.use(express.json());
+
+
 const userRoutes = require('./routes/userRoutes');
 
 const reservationRoutes = require('./routes/reservationRoutes');
@@ -12,7 +17,6 @@ const buildingRoutes = require('./routes/buildingRoutes');
 
 const analyticsRoutes = require('./routes/analyticsRoutes');
 
-const app = express();
 
 
 // Middleware
@@ -26,7 +30,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   }));
-app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/reservations', reservationRoutes);
