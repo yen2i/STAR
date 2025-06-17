@@ -168,7 +168,7 @@ const RoomDetailPage = () => {
     } catch (err) {
       setShowConfirm(false);
       alert(err.response?.status === 409
-        ? 'You have already made a reservation for this date.'
+        ? 'Some of the selected periods have already been reserved'
         : 'Reservation failed. Try again.');
     }
   };

@@ -139,7 +139,7 @@ const ProfilePage = () => {
       );
       setFavoriteBuildings(matched);
     } catch (err) {
-      alert('즐겨찾기 변경 실패!');
+      alert('Unable to update your favorites. Please try again.');
     }
   };
 
