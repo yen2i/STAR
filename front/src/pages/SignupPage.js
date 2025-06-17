@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/instance';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import '../styles/SignupPage.css';
@@ -35,7 +35,7 @@ const SignupPage = () => {
 
   const handleSignup = async () => {
     try {
-      await axios.post('http://localhost:8080/api/users/register', form);
+      await api.post('/users/register', form);
       alert('회원가입 성공!');
       window.location.href = '/login';
     } catch (err) {
