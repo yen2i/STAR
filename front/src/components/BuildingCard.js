@@ -1,6 +1,4 @@
 import React from 'react';
-import filledStar from '../assets/icons/star-filled.png';
-import emptyStar from '../assets/icons/star-empty.png';
 import '../styles/ReservePage.css'; // ReservePage와 동일한 스타일 사용
 import FavoriteButton from './FavoriteButton';
 

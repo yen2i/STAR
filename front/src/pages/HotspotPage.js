@@ -128,7 +128,6 @@ const HotspotPage = () => {
   return (
     <div className="hotspot-page">
       <Header />
-
       <div className="category-bar">
         {CATEGORIES.map((cat) => (
           <button
