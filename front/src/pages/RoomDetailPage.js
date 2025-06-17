@@ -245,7 +245,7 @@ const RoomDetailPage = () => {
                   <p>- {day} / Period {firstRow} - {lastRow} ({timeRange})</p>
                   <hr />
                   <p>
-                    Number of People: <strong>{numberToRange[parseInt(purposeInfo?.peopleCount)] || '-'}</strong><br />
+                    Number of People: <strong>{purposeInfo?.peopleCount || '-'}</strong><br />
                     Purpose: <strong>{purposeInfo?.purpose || '-'}</strong>
                   </p>
                 </>
