@@ -37,7 +37,7 @@ const MOCK_BUILDINGS = [
   },
 ];
 
-// ✅ mock 유저 미리 설정
+// mock 유저 미리 설정
 const MOCK_USER = {
   name: '홍길동',
   studentNumber: '202312345',
@@ -65,11 +65,11 @@ const ProfilePage = () => {
         const userData = res.data.user;
         setUser(userData);
 
-        // ✅ 서버에서 전체 건물 목록 받아오기
+        // 서버에서 전체 건물 목록 받아오기
         const buildingsRes = await axios.get('http://localhost:8080/api/buildings');
         const buildingData = buildingsRes.data.buildings;
 
-        // ✅ building.name과 userData.favorites를 비교해 매칭
+        // building.name과 userData.favorites 비교 후 매칭
         const matched = await Promise.all(
           buildingData
             .filter(b => userData.favorites.includes(b.buildingName))
