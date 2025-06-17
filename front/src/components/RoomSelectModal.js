@@ -16,7 +16,13 @@ const RoomSelectModal = ({ building, onClose, onSelectRoom }) => {
         <p className="modal-label">
           Available Rooms ({building.availableRooms.length})
         </p>
-        {building.availableRooms.map((room, i) => (
+        {[...building.availableRooms]
+        .sort((a, b) => {
+          const numA = parseInt(a.room.match(/\d+/)?.[0]);
+          const numB = parseInt(b.room.match(/\d+/)?.[0]);
+          return numA - numB;
+        })
+        .map((room, i) => (
           <div key={i} className="room-row">
             <span>
               {room.room} <span className="green-dot" />
