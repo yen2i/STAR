@@ -10,37 +10,52 @@ import signstudentnumber from '../assets/signprofile.png';
 const LoginPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ studentNumber: '', password: '' });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError('');
   };
 
   const handleLogin = async () => {
     try {
       const res = await api.post('/users/login', form);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/'); // 메인 페이지로 이동
+
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        navigate('/');
+      } else {
+        throw new Error('No token received');
+      }
     } catch (err) {
-      console.warn('⚠️ 백엔드 로그인 실패 - mock 처리로 우회');
+      console.error('🔴 로그인 실패:', err);
 
-      const mockUser = {
-        name: '테스트유저',
-        studentNumber: form.studentNumber || '23100000',
-        major: 'ITM',
-        favorites: ['프론티어관', '다산관'],
-      };
+      if (err.response?.status === 401) {
+        setError('잘못된 학번 또는 비밀번호입니다.');
+      } else if (err.response?.status === 400) {
+        setError('입력값이 유효하지 않습니다.');
+      } else {
+        setError('서버 연결에 실패했습니다. Mock 로그인으로 우회합니다.');
 
-      localStorage.setItem('token', 'mock-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      alert('⚠️ 서버 미연결 상태 - mock 로그인 처리됨');
-      navigate('/');
+        // ⚠️ mock 로그인 fallback
+        const mockUser = {
+          name: '테스트유저',
+          studentNumber: form.studentNumber || '23100000',
+          major: 'ITM',
+          favorites: ['프론티어관', '다산관'],
+        };
+
+        localStorage.setItem('token', 'mock-token');
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        navigate('/');
+      }
     }
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 새로고침 방지
-    handleLogin();      // 로그인 실행
+    e.preventDefault();
+    handleLogin();
   };
 
   return (
@@ -56,7 +71,6 @@ const LoginPage = () => {
           </h1>
         </div>
 
-        {/*form으로 감싸고 onSubmit 적용 */}
         <form className="login-box" onSubmit={handleSubmit}>
           <h2 className="login-label">Log in</h2>
 
@@ -84,8 +98,10 @@ const LoginPage = () => {
             />
           </div>
 
+          {error && <p className="login-error">{error}</p>}
+
           <div className="login-buttons">
-            <button type="submit">Log in</button> {/* 기본 로그인 */}
+            <button type="submit">Log in</button>
             <button type="button" onClick={() => navigate('/signup')}>Sign in</button>
           </div>
         </form>
