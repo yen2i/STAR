@@ -71,26 +71,34 @@ router.get('/availability', async (req, res) => {
     });
 
     // 시간 → Period로 매핑 (시간 기준은 08:00 ~ 17:50까지 10개)
-    const hourToPeriod = {
-      8: 0, 9: 1, 10: 2, 11: 3,
-      12: 4, 13: 5, 14: 6, 15: 7,
-      16: 8, 17: 9
-    };
+    const hourToPeriod = [
+      '08:00', '09:00', '10:00', '11:00', '12:00',
+      '13:00', '14:00', '15:00', '16:00', '17:00', '18:00' 
+    ];
+
+    function timeToPeriodIndex(timeStr) {
+      const [hour, min] = timeStr.split(':').map(Number);
+      for (let i = 0; i < hourToPeriod.length; i++) {
+        const [h, m] = hourToPeriod[i].split(':').map(Number);
+        if (hour === h && min === m) return i;
+      }
+      return -1;
+    }
 
     reservations.forEach(r => {
       const date = moment(r.date);
-      const day = DAYS[date.diff(startDate, 'days')];
-    
-      const startHour = parseInt(r.startTime.split(':')[0]);
-      const endHour = parseInt(r.endTime.split(':')[0]);
-    
-      const startPeriod = hourToPeriod[startHour];
-      const endPeriod = hourToPeriod[endHour];
-    
-      if (day && startPeriod !== undefined && endPeriod !== undefined) {
-        for (let p = startPeriod; p < endPeriod; p++) {
-          availability[day][`Period ${p}`] = { status: 'unavailable' }; // 예약은 subject 없음
-        }
+      const dayIndex = date.diff(startDate, 'days');
+      if (dayIndex < 0 || dayIndex >= 5) return;
+      
+      const day = DAYS[dayIndex];
+      const startPeriod = timeToPeriodIndex(r.startTime); 
+      const endPeriod = timeToPeriodIndex(r.endTime);  
+      
+      if (startPeriod === -1 || endPeriod === -1) return;
+
+      const cappedEnd = Math.min(endPeriod, 10);
+      for (let p = startPeriod; p < cappedEnd; p++) {
+        availability[day][`Period ${p}`] = { status: 'unavailable' };
       }
     });
 
