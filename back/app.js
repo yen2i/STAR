@@ -21,19 +21,12 @@ const app = express();
 //     origin: 'http://localhost:3000',
 //     credentials: true
 //   }));
-// app.use(cors({
-//   origin: ['http://localhost:3000', 'https://st-available-room.netlify.app'],
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   credentials: true
-// }));
 app.use(cors({
-  origin: ['http://localhost:3000','https://st-available-room.netlify.app'], // ✅ 프론트 배포 URL 정확히 명시
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // ✅ 쿠키/헤더 인증 정보 허용
-}));
-
+    origin: 'http://localhost:3000',  // 프론트 주소
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  }));
 app.use(express.json());
 
 app.use('/api/users', userRoutes);

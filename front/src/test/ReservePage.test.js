@@ -3,10 +3,7 @@ import { render, screen } from '@testing-library/react';
 import ReservePage from '../pages/ReservePage';
 import { BrowserRouter } from 'react-router-dom';
 
-// ✅ api 인스턴스를 mocking
-import api from '../api/instance';
-
-jest.mock('../api/instance', () => ({
+jest.mock('axios', () => ({
   get: jest.fn(() => Promise.resolve({ data: { buildings: [] } })),
 }));
 

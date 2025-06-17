@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api/instance';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -17,10 +17,10 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await api.post('/users/login', form);
+      const res = await axios.post('http://localhost:8080/api/users/login', form);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/'); // 메인 페이지로 이동
+      navigate('/'); // ✅ 메인 페이지로 이동
     } catch (err) {
       console.warn('⚠️ 백엔드 로그인 실패 - mock 처리로 우회');
 
@@ -39,8 +39,8 @@ const LoginPage = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 새로고침 방지
-    handleLogin();      // 로그인 실행
+    e.preventDefault(); // ⛔ 새로고침 방지
+    handleLogin();      // ✅ 로그인 실행
   };
 
   return (
@@ -56,7 +56,7 @@ const LoginPage = () => {
           </h1>
         </div>
 
-        {/*form으로 감싸고 onSubmit 적용 */}
+        {/* ✅ form으로 감싸고 onSubmit 적용 */}
         <form className="login-box" onSubmit={handleSubmit}>
           <h2 className="login-label">Log in</h2>
 
@@ -85,7 +85,7 @@ const LoginPage = () => {
           </div>
 
           <div className="login-buttons">
-            <button type="submit">Log in</button> {/* 기본 로그인 */}
+            <button type="submit">Log in</button> {/* ✅ 기본 로그인 버튼 */}
             <button type="button" onClick={() => navigate('/signup')}>Sign in</button>
           </div>
         </form>
