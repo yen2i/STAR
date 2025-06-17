@@ -5,37 +5,32 @@ import Footer from '../components/Footer';
 import Modal from '../components/Modal';
 import '../styles/MyReservationPage.css';
 
-// ✅ 이미지 경로 매핑
 const getBuildingImage = (number) => {
   try {
     return require(`../assets/buildings img/${number}.png`);
   } catch {
-    return require('../assets/buildings img/2.png'); // Default: Dasan Hall
+    return require('../assets/buildings img/2.png');
   }
 };
 
 const MyReservationPage = () => {
   const [reservations, setReservations] = useState([]);
-  const [buildings, setBuildings] = useState([]); // 건물 번호 <-> 이름 매핑용
+  const [buildings, setBuildings] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalStep, setModalStep] = useState('confirm');
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [error, setError] = useState('');
 
-  // 🧭 건물 리스트 받아오기
   const fetchBuildings = async () => {
     try {
       const res = await axios.get('https://star-isih.onrender.com/api/buildings');
       setBuildings(res.data.buildings || []);
     } catch (err) {
-      console.warn('⚠️ 건물 정보 fetch 실패, fallback mock 사용');
-      setBuildings([
-        { buildingNo: 32, buildingName: 'Frontier Hall' },
-        { buildingNo: 2, buildingName: 'Dasan Hall' }
-      ]);
+      console.error('[Error] Failed to load buildings:', err);
+      setError('Failed to load building information. Please try again later.');
     }
   };
 
-  // 🗓️ 예약 정보 불러오기
   const fetchReservations = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -44,25 +39,8 @@ const MyReservationPage = () => {
       });
       setReservations(res.data);
     } catch (err) {
-      console.warn('⚠️ 예약 정보 fetch 실패, mock 사용');
-      setReservations([
-        {
-          _id: 'mock1',
-          building: 'Frontier Hall',
-          room: '107',
-          date: '2024-06-05',
-          startTime: '08:00',
-          endTime: '10:50'
-        },
-        {
-          _id: 'mock2',
-          building: 'Dasan Hall',
-          room: '201',
-          date: '2024-06-06',
-          startTime: '09:00',
-          endTime: '09:50'
-        }
-      ]);
+      console.error('[Error] Failed to fetch reservations:', err);
+      setError('Failed to load reservations. Please try again later.');
     }
   };
 
@@ -88,11 +66,11 @@ const MyReservationPage = () => {
       await axios.delete(`https://star-isih.onrender.com/api/reservations/${selectedReservation._id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setReservations(reservations.filter(r => r._id !== selectedReservation._id));
+      setReservations(prev => prev.filter(r => r._id !== selectedReservation._id));
       setModalStep('success');
     } catch (err) {
-      console.error('❌ 예약 취소 실패:', err);
-      alert('Reservation cancel failed.');
+      console.error('[Error] Cancel failed:', err);
+      alert('Failed to cancel reservation. Please try again.');
       closeModal();
     }
   };
@@ -108,6 +86,9 @@ const MyReservationPage = () => {
       <Header />
       <main className="my-reservation-content">
         <h2>My reservation ({reservations.length})</h2>
+
+        {error && <p className="error-message">{error}</p>}
+
         <div className="reservation-list">
           {reservations.map((res) => {
             const buildingNo = getBuildingNo(res.building);
@@ -141,17 +122,17 @@ const MyReservationPage = () => {
                   - {selectedReservation.startTime} ~ {selectedReservation.endTime}, {selectedReservation.date}
                 </div>
               </div>
-              <p style={{ marginTop: '24px' }}>Are you sure to cancel your reservation?</p>
+              <p style={{ marginTop: '24px' }}>Are you sure you want to cancel this reservation?</p>
               <div className="modal-buttons">
-                <button onClick={confirmCancel}>Yes!</button>
-                <button onClick={closeModal}>No!</button>
+                <button onClick={confirmCancel}>Yes</button>
+                <button onClick={closeModal}>No</button>
               </div>
             </div>
           ) : (
             <div>
               <p>Reservation canceled successfully!</p>
               <div className="modal-buttons">
-                <button onClick={closeModal}>Check Reservation</button>
+                <button onClick={closeModal}>OK</button>
               </div>
             </div>
           )}

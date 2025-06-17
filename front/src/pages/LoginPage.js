@@ -10,6 +10,7 @@ import signstudentnumber from '../assets/signprofile.png';
 const LoginPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ studentNumber: '', password: '' });
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,27 +21,28 @@ const LoginPage = () => {
       const res = await axios.post('https://star-isih.onrender.com/api/users/login', form);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/'); // ✅ 메인 페이지로 이동
+      navigate('/'); // ✅ redirect to main
     } catch (err) {
-      console.warn('⚠️ 백엔드 로그인 실패 - mock 처리로 우회');
+      console.error('[Login Error]', err);
 
-      const mockUser = {
-        name: '테스트유저',
-        studentNumber: form.studentNumber || '23100000',
-        major: 'ITM',
-        favorites: ['프론티어관', '다산관'],
-      };
-
-      localStorage.setItem('token', 'mock-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      alert('⚠️ 서버 미연결 상태 - mock 로그인 처리됨');
-      navigate('/');
+      if (err.response) {
+        if (err.response.status === 400) {
+          setErrorMessage('User not found. Please check your student number.');
+        } else if (err.response.status === 401) {
+          setErrorMessage('Incorrect password. Please try again.');
+        } else {
+          setErrorMessage('Login failed. Please try again later.');
+        }
+      } else {
+        setErrorMessage('Network error. Please check your internet connection.');
+      }
     }
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // ⛔ 새로고침 방지
-    handleLogin();      // ✅ 로그인 실행
+    e.preventDefault();
+    setErrorMessage('');
+    handleLogin();
   };
 
   return (
@@ -56,7 +58,6 @@ const LoginPage = () => {
           </h1>
         </div>
 
-        {/* ✅ form으로 감싸고 onSubmit 적용 */}
         <form className="login-box" onSubmit={handleSubmit}>
           <h2 className="login-label">Log in</h2>
 
@@ -84,8 +85,10 @@ const LoginPage = () => {
             />
           </div>
 
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+
           <div className="login-buttons">
-            <button type="submit">Log in</button> {/* ✅ 기본 로그인 버튼 */}
+            <button type="submit">Log in</button>
             <button type="button" onClick={() => navigate('/signup')}>Sign in</button>
           </div>
         </form>

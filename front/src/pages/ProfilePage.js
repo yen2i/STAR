@@ -4,7 +4,7 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BuildingCard from '../components/BuildingCard';
-import RoomSelectModal from '../components/RoomSelectModal'; // 모달 추가
+import RoomSelectModal from '../components/RoomSelectModal';
 import profileImg from '../assets/profile.png';
 import '../styles/ProfilePage.css';
 
@@ -16,67 +16,39 @@ const getBuildingImage = (id) => {
   }
 };
 
-const MOCK_BUILDINGS = [
-  {
-    id: '32',
-    name: 'Frontier Hall',
-    image: getBuildingImage('32'),
-    availableRooms: [
-      { room: 'Room 107', time: '8:00 - 10:50' },
-      { room: 'Room 131', time: '11:00 - 12:50' },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Dasan Hall',
-    image: getBuildingImage('2'),
-    availableRooms: [
-      { room: 'Room 201', time: '9:00 - 9:50' },
-      { room: 'Room 105', time: '10:00 - 10:50' },
-    ],
-  },
-];
-
-// ✅ mock 유저 미리 설정
-const MOCK_USER = {
-  name: '홍길동',
-  studentNumber: '202312345',
-  major: '컴퓨터공학과',
-  favorites: ['Frontier Hall', 'Dasan Hall'],
-};
-
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [favoriteBuildings, setFavoriteBuildings] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('No token');
+        if (!token) throw new Error('No authentication token');
 
+        // 🧾 사용자 정보 요청
         const res = await axios.get('https://star-isih.onrender.com/api/users/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
-
         const userData = res.data.user;
         setUser(userData);
 
-        // 서버에서 전체 건물 목록 받아오기
-        const buildingsRes = await axios.get('hhttps://star-isih.onrender.com/api/buildings');
+        // 🏢 건물 목록 요청
+        const buildingsRes = await axios.get('https://star-isih.onrender.com/api/buildings');
         const buildingData = buildingsRes.data.buildings;
 
-        // building.name과 userData.favorites를 비교해 매칭
+        // 🧩 즐겨찾기 건물 매칭 + 강의실 정보 병합
         const matched = await Promise.all(
           buildingData
             .filter(b => userData.favorites.includes(b.buildingName))
             .map(async (b) => {
               const roomRes = await axios.get(`https://star-isih.onrender.com/api/buildings/rooms?buildingNo=${b.buildingNo}`);
               const availableRooms = roomRes.data.rooms || [];
-        
+
               return {
                 id: String(b.buildingNo),
                 name: b.buildingName,
@@ -90,14 +62,8 @@ const ProfilePage = () => {
         );
         setFavoriteBuildings(matched);
       } catch (err) {
-        console.warn('⚠️ 서버 연결 실패, mock 유저 사용');
-        localStorage.setItem('user', JSON.stringify(MOCK_USER));
-        setUser(MOCK_USER);
-
-        const matched = MOCK_BUILDINGS.filter(b =>
-          MOCK_USER.favorites.includes(b.name)
-        );
-        setFavoriteBuildings(matched);
+        console.error('[Error] Failed to load user profile or building data:', err);
+        setError('Failed to load profile or building data. Please try again later.');
       }
     };
 
@@ -118,41 +84,69 @@ const ProfilePage = () => {
   const toggleFavorite = async (buildingName) => {
     try {
       const token = localStorage.getItem('token');
-      const isAlreadyFavorite = user?.favorites.includes(buildingName);
+      if (!token || !user) throw new Error('Unauthorized');
+
+      const isAlreadyFavorite = user.favorites.includes(buildingName);
       let updatedFavorites;
 
-      if (token) {
-        if (isAlreadyFavorite) {
-          await axios.delete('https://star-isih.onrender.com/api/users/favorites', {
-            headers: { Authorization: `Bearer ${token}` },
-            data: { building: buildingName },
-          });
-          updatedFavorites = user.favorites.filter((n) => n !== buildingName);
-        } else {
-          await axios.post('https://star-isih.onrender.com/api/users/favorites', { building: buildingName }, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          updatedFavorites = [...user.favorites, buildingName];
-        }
+      if (isAlreadyFavorite) {
+        await axios.delete('https://star-isih.onrender.com/api/users/favorites', {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { building: buildingName },
+        });
+        updatedFavorites = user.favorites.filter((n) => n !== buildingName);
       } else {
-        // mock fallback
-        updatedFavorites = isAlreadyFavorite
-          ? user.favorites.filter((n) => n !== buildingName)
-          : [...user.favorites, buildingName];
+        await axios.post('https://star-isih.onrender.com/api/users/favorites', { building: buildingName }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        updatedFavorites = [...user.favorites, buildingName];
       }
 
+      // 업데이트된 사용자 즐겨찾기 정보 반영
       const updatedUser = { ...user, favorites: updatedFavorites };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
 
-      const matched = MOCK_BUILDINGS.filter(b =>
-        updatedFavorites.includes(b.name)
+      // 즐겨찾기 건물 다시 매핑
+      const buildingsRes = await axios.get('https://star-isih.onrender.com/api/buildings');
+      const buildingData = buildingsRes.data.buildings;
+
+      const matched = await Promise.all(
+        buildingData
+          .filter(b => updatedFavorites.includes(b.buildingName))
+          .map(async (b) => {
+            const roomRes = await axios.get(`https://star-isih.onrender.com/api/buildings/rooms?buildingNo=${b.buildingNo}`);
+            const availableRooms = roomRes.data.rooms || [];
+
+            return {
+              id: String(b.buildingNo),
+              name: b.buildingName,
+              image: getBuildingImage(b.buildingNo),
+              availableRooms: availableRooms.map(room => ({
+                room: `Room ${room}`,
+                time: '8:00 - 17:50',
+              }))
+            };
+          })
       );
+
       setFavoriteBuildings(matched);
     } catch (err) {
-      alert('Unable to update your favorites. Please try again.');
+      console.error('[Error] Failed to update favorites:', err);
+      alert('Failed to update favorites. Please try again.');
     }
   };
+
+  if (error) {
+    return (
+      <div className="profile-page">
+        <Header />
+        <main className="profile-content">
+          <p className="error-message">{error}</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!user) return <div>Loading...</div>;
 
@@ -188,11 +182,13 @@ const ProfilePage = () => {
         </div>
       </main>
 
-      <RoomSelectModal
-        building={selectedBuilding}
-        onClose={() => setSelectedBuilding(null)}
-        onSelectRoom={handleRoomSelect}
-      />
+      {showModal && selectedBuilding && (
+        <RoomSelectModal
+          building={selectedBuilding}
+          onClose={() => setSelectedBuilding(null)}
+          onSelectRoom={handleRoomSelect}
+        />
+      )}
 
       <Footer />
     </div>

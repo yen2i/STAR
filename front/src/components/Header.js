@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/starlogo.png';
-import '../styles/Header.css'; // CSS 분리 후 import
+import '../styles/Header.css'; 
 
 const Header = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Header = () => {
         onClick={() => navigate('/')}
       />
 
-      {/* 모바일 ☰  메뉴 */}
+      {/* mobile ☰  menu */}
       <div className="menu" onClick={() => setMenuOpen(!menuOpen)}>☰</div>
 
       <nav className={`nav ${menuOpen ? 'open' : ''}`}>

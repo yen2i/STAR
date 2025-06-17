@@ -14,7 +14,7 @@ const SignupPage = () => {
 
   const [departments, setDepartments] = useState([]);
 
-  // 학과 데이터 불러오기
+  // Load department list from JSON
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -23,7 +23,7 @@ const SignupPage = () => {
         const deptList = data.map(d => d.department);
         setDepartments(deptList);
       } catch (err) {
-        console.error('⚠️ 학과 데이터 로딩 실패:', err);
+        console.error('⚠️ Failed to load department data:', err);
       }
     };
     fetchDepartments();
@@ -36,16 +36,14 @@ const SignupPage = () => {
   const handleSignup = async () => {
     try {
       await axios.post('https://star-isih.onrender.com/api/users/register', form);
-      alert('회원가입 성공!');
+      alert('Sign up successful!');
       window.location.href = '/login';
     } catch (err) {
       if (!err.response) {
-        console.warn('⚠️ 서버 연결 실패. 로컬에 mock 회원 저장.');
-        localStorage.setItem('mockUser', JSON.stringify(form));
-        alert('⚠️ 서버 미연결 - 로컬 mock 회원가입 완료');
-        window.location.href = '/login';
+        console.error('⚠️ Failed to connect to the server:', err);
+        alert('Failed to connect to the server. Please try again later.');
       } else {
-        alert(err.response?.data?.message || '회원가입 실패');
+        alert(err.response?.data?.message || 'Sign up failed. Please check your input and try again.');
       }
     }
   };
@@ -55,9 +53,9 @@ const SignupPage = () => {
       <Header />
       <main className="signup-content">
         <div className="signup-box">
-          <h2 className="signup-label">Sign in</h2>
+          <h2 className="signup-label">Sign up</h2>
 
-          {/* 이름 */}
+          {/* Name */}
           <div className="input-wrapper">
             <label>Name</label>
             <input
@@ -65,10 +63,11 @@ const SignupPage = () => {
               type="text"
               placeholder="Enter your name"
               onChange={handleChange}
+              required
             />
           </div>
 
-          {/* 학번 */}
+          {/* Student Number */}
           <div className="input-wrapper">
             <label>Student Number</label>
             <input
@@ -76,10 +75,11 @@ const SignupPage = () => {
               type="text"
               placeholder="Enter your student number"
               onChange={handleChange}
+              required
             />
           </div>
 
-          {/* 비밀번호 */}
+          {/* Password */}
           <div className="input-wrapper">
             <label>Password</label>
             <input
@@ -87,13 +87,14 @@ const SignupPage = () => {
               type="password"
               placeholder="Enter password"
               onChange={handleChange}
+              required
             />
           </div>
 
-          {/* 전공 선택 */}
+          {/* Major */}
           <div className="input-wrapper">
             <label>Major</label>
-            <select name="major" value={form.major} onChange={handleChange}>
+            <select name="major" value={form.major} onChange={handleChange} required>
               <option value="">Select your department</option>
               {departments.map((dept, idx) => (
                 <option key={idx} value={dept}>{dept}</option>
@@ -101,9 +102,9 @@ const SignupPage = () => {
             </select>
           </div>
 
-          {/* 회원가입 버튼 */}
+          {/* Sign Up Button */}
           <div className="signup-button">
-            <button onClick={handleSignup}>Sign in</button>
+            <button onClick={handleSignup}>Sign up</button>
           </div>
         </div>
       </main>
