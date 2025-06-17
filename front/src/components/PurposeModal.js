@@ -26,13 +26,13 @@ const PurposeModal = ({ onClose, onSubmit }) => {
 
         <div className="modal-field">
           <label>Number of People</label>
-          <select value={peopleCount} onChange={(e) => setPeople(e.target.value)}>
-            <option value="">Select</option>
-            <option value="10">1–10</option>
-            <option value="30">11–30</option>
-            <option value="50">31–50</option>
-            <option value="100">51+</option>
-          </select>
+          <input
+            type="number"
+            min="1"
+            placeholder="Enter number of people"
+            value={peopleCount}
+            onChange={(e) => setPeople(e.target.value)}
+          />
         </div>
 
         <div className="modal-field">
