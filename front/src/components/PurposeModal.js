@@ -12,7 +12,7 @@ const PurposeModal = ({ onClose, onSubmit }) => {
     }
 
     onSubmit({
-      peopleCount: Number(peopleCount), // 숫자로 백엔드에 전송
+      peopleCount: Number(peopleCount), 
       purpose,
     });
 

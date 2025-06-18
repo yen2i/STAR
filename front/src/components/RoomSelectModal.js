@@ -1,4 +1,3 @@
-// src/components/RoomSelectModal.js
 import React from 'react';
 import Modal from './Modal';
 
