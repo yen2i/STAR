@@ -16,17 +16,17 @@ const app = express();
 
 
 // Middleware
-//app.use(cors());
 // app.use(cors({
 //     origin: 'http://localhost:3000',
 //     credentials: true
 //   }));
 app.use(cors({
-    origin: 'http://localhost:3000',  // 프론트 주소
+    origin: 'https://star-client-brown.vercel.app',  // 프론트 주소
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/api/users', userRoutes);

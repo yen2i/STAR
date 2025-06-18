@@ -30,17 +30,18 @@ const HotspotPage = () => {
   const fetchData = async (category) => {
     try {
       let response;
+
       if (category === 'Auditorium Size / Large Hall') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-large-group');
+        response = await axios.get('https://star-isih.onrender.com/api/analytics/popular-buildings/by-large-group');
       } else if (category === 'Study Friendly') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=Study');
+        response = await axios.get('https://star-isih.onrender.com/api/analytics/popular-buildings/by-purpose?purpose=Study');
       } else if (category === 'Meeting & Presentation / Collab Zones') {
-        response = await axios.get('http://localhost:8080/api/analytics/popular-buildings/by-purpose?purpose=Meeting');
+        response = await axios.get('https://star-isih.onrender.com/api/analytics/popular-buildings/by-purpose?purpose=Meeting');
       }
 
       const hotspotData = Array.isArray(response.data) ? response.data : [response.data];
 
-      const allBuildingsRes = await axios.get('http://localhost:8080/api/buildings');
+      const allBuildingsRes = await axios.get('https://star-isih.onrender.com/api/buildings');
       const allBuildings = allBuildingsRes.data.buildings;
 
       const matched = hotspotData.map((item, i) => {
@@ -57,27 +58,8 @@ const HotspotPage = () => {
 
       setHotspots(matched);
     } catch (err) {
-      console.error('🔥 Fallback to mock data due to error:', err);
-      setHotspots([
-        {
-          id: '32',
-          rank: 1,
-          name: 'Frontier Hall',
-          image: getBuildingImage('32'),
-        },
-        {
-          id: '2',
-          rank: 2,
-          name: 'Dasan Hall',
-          image: getBuildingImage('2'),
-        },
-        {
-          id: '2',
-          rank: 3,
-          name: 'Dasan Hall',
-          image: getBuildingImage('2'),
-        },
-      ]);
+      console.error('[Hotspot Fetch Error] Failed to load hotspot data:', err);
+      setHotspots([]); // fallback 제거: 빈 배열로 처리
     }
   };
 
@@ -87,10 +69,10 @@ const HotspotPage = () => {
 
   const handleReserve = async (building) => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/buildings/rooms?buildingNo=${building.id}`);
+      const res = await axios.get(`https://star-isih.onrender.com/api/buildings/rooms?buildingNo=${building.id}`);
       const availableRooms = res.data.rooms.map(room => ({
         room: `Room ${room}`,
-        time: '8:00 - 17:50',
+        time: '08:00 - 17:50',
       }));
 
       setModalBuilding({
@@ -100,18 +82,8 @@ const HotspotPage = () => {
         availableRooms,
       });
     } catch (err) {
-      console.error('Failed to fetch rooms:', err);
-      const mockRooms = [
-        { room: 'Room 101', time: '08:00 - 09:50' },
-        { room: 'Room 202', time: '10:00 - 11:50' },
-      ];
-
-      setModalBuilding({
-        id: building.id,
-        name: building.name,
-        image: building.image,
-        availableRooms: mockRooms,
-      });
+      console.error('[Room Fetch Error] Failed to fetch available rooms:', err);
+      alert('Failed to load available rooms. Please try again later.');
     }
   };
 
